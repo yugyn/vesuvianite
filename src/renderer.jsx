@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css'
 import React, {Component} from 'react';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 
 import {createRoot} from 'react-dom/client';
 import Navbar from './components/Navbar';
@@ -12,6 +13,16 @@ import caserta from './images/4.jpg';
 import hirpinia from './images/5.jpg';
 import sannio from './images/6.jpg';
 import salerno from './images/7.jpg';
+
+import Home from './components/Home';
+import Gallery from './components/Gallery';
+import ToDo from './components/ToDo';
+import MineralClasses from './components/MineralClasses';
+import CrystalSystems from './components/CrystalSystems';
+import CrystalSystem from './components/CrystalSystem';
+import Minerals from './components/views/Minerals';
+import Mineral from './components/views/Mineral';
+import MineralSave from './components/views/MineralSave';
 
 class App extends Component {
 
@@ -29,11 +40,13 @@ class App extends Component {
 
   render() {
 
+    /*
     return (
       <>
         <Navbar/>
         <div className='container'>
           <h1>Minerali del Vesuvio</h1>
+          <Link to="/gallery">Vai alla Galleria</Link>
           <hr/>
           <div className='row'>
             {this.state.cards.map(card => (
@@ -47,6 +60,35 @@ class App extends Component {
           </div>
         </div>
       </>
+    );
+    */
+
+    return(
+
+      <HashRouter>
+        <Navbar/>
+        <nav style={styles.nav}>
+          <Link to="/" style={styles.navLink}>Home</Link>
+          <Link to="/gallery" style={styles.navLink}>Galleria</Link>
+          <Link to="/todo" style={styles.navLink}>To-Do</Link>
+          <Link to="/mineralClasses" style={styles.navLink}>Mineral Classes</Link>
+          <Link to="/crystalSystems" style={styles.navLink}>Crystal Systems</Link>
+          <Link to="/minerals" style={styles.navLink}>Minerali</Link>
+        </nav>
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/todo" element={<ToDo />} />
+          <Route path="/mineralClasses" element={<MineralClasses />} />
+          <Route path="/crystalSystems" element={<CrystalSystems />} />
+          <Route path="/crystalSystem/:id" element={<CrystalSystem />} />
+          <Route path="/minerals" element={<Minerals />} />
+          <Route path="/mineral/:id" element={<Mineral />} />
+          <Route path="/mineralSave/:id" element={<MineralSave />} />
+        </Routes>
+      </HashRouter>
+      
     );
 
   }
@@ -76,49 +118,25 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(<App/>);
 
-const taskInput = document.getElementById('task-input');
-const addTaskBtn = document.getElementById('add-task-btn');
-const taskList = document.getElementById('task-list');
-
-const handleAddTask = async() => {
-  const title = taskInput.value.trim();
-  await window.electronAPI.addTask(title);
-  renderTasks();
-}
-
-addTaskBtn.addEventListener('click', handleAddTask);
-
-const renderTasks = async () => {
-  const tasks = await window.electronAPI.getAllTasks();
-  taskList.innerHTML = '';
-  tasks.forEach(task => {
-    
-    const li = document.createElement('li');
-    
-    const titleSpan = document.createElement('span');
-    titleSpan.textContent = task.title;
-    
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.checked = task.completed;
-    checkbox.addEventListener('change', async() => {
-      await window.electronAPI.completeTask({id: task.id, completed: checkbox.checked ? 1 : 0})
-    });
-    
-    const deleteBtn = document.createElement('button');
-    deleteBtn.addEventListener('click', async() => {
-      await window.electronAPI.deleteTask(task.id);
-      renderTasks();
-    })
-    deleteBtn.textContent = 'Delete';
-
-    li.appendChild(titleSpan);
-    li.appendChild(checkbox);
-    li.appendChild(deleteBtn);
-    taskList.appendChild(li);
-
-  });
-}
 
 
-renderTasks();
+
+
+
+
+// Semplici stili JS per l'esempio
+const styles = {
+  container: { padding: '20px', fontFamily: 'sans-serif' },
+  nav: { background: '#20232a', padding: '10px', display: 'flex', gap: '15px' },
+  navLink: { color: '#61dafb', textDecoration: 'none', fontWeight: 'bold' },
+  button: { 
+    display: 'inline-block', 
+    marginTop: '10px', 
+    padding: '8px 16px', 
+    backgroundColor: '#007acc', 
+    color: 'white', 
+    textDecoration: 'none', 
+    borderRadius: '4px' 
+  }
+
+};

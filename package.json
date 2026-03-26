@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-starter-project",
-  "productName": "electron-react-starter-project",
+  "name": "vesuvianite",
+  "productName": "Vesuvianite",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Vesuvianite",
   "main": ".vite/build/main.js",
   "private": true,
   "scripts": {
@@ -14,8 +14,8 @@
   },
   "keywords": [],
   "author": {
-    "name": "e_vesp",
-    "email": "e.vespiano@agomir.com"
+    "name": "Eugenio vespiano",
+    "email": "eugenio.vespiano@gmail.com"
   },
   "license": "MIT",
   "devDependencies": {
@@ -37,6 +37,8 @@
     "bootstrap": "^5.3.8",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-bootstrap-icons": "^1.11.6",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.2"
   }
 }

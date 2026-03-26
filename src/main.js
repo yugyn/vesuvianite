@@ -1,10 +1,11 @@
 import { app, ipcMain, BrowserWindow, Menu } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
-import AppDatabase from './db/database';
-import setUpHandlers from './db/ipcHandlers';
+import AppDB from './db/AppDB';
+import ipcHandlers from './db/ipcHandlers';
 
 let db;
+let mainWindow;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -12,17 +13,18 @@ if (started) {
 }
 
 const createWindow = () => {
-  Menu.setApplicationMenu(null);
+//  Menu.setApplicationMenu(null);
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+  mainWindow = new BrowserWindow({
+    show: false,         // Evita il "lampo" bianco al caricamento      
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
 
-  // and load the index.html of the app.
+  mainWindow.maximize();
+  mainWindow.show();
+
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
@@ -30,7 +32,7 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-//  mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -38,8 +40,8 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
 
-  db = new AppDatabase();
-  setUpHandlers(db);
+  db = new AppDB();
+  ipcHandlers(db);
 
   createWindow();
 
@@ -66,25 +68,78 @@ app.on('window-all-closed', () => {
 // code. You can also put them in separate files and import them here.
 
 
-ipcMain.on('open-second-window', () => {
 
-  const secondWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+function createAboutWindow() {
+
+  const aboutWindow = new BrowserWindow({
+    height: 400,
+    width: 400,
+    parent: mainWindow,
+    modal: true,         // Rende la finestra bloccante (modale)
+    resizable: false,    // Disabilita il ridimensionamento (toglie l'icona resize)
+    minimizable: false,  // Opzionale: toglie il tasto per iconizzare
+    maximizable: false,  // Toglie il tasto "ingrandisci"
+    show: false,         // Evita il "lampo" bianco al caricamento      
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
 
-// Se sei in sviluppo con Vite:
-  if (process.env.VITE_DEV_SERVER_URL) {
-    // Carica l'URL di Vite aggiungendo un hash o un path per React Router
-    secondWindow.loadURL(`${process.env.VITE_DEV_SERVER_URL}#/second-window`);
+  aboutWindow.setMenu(null);
+
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    aboutWindow.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/about.html`);
   } else {
-    // In produzione, punta al file index.html buildato
-    secondWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/second-window.html`));
+    aboutWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/about.html`));
   }
 
+  aboutWindow.once('ready-to-show', () => {
+    aboutWindow.show();
+  });
+
+}
+
+
+// Ascolta il messaggio "open-about-window" dal Renderer
+ipcMain.on('window:about', () => {
+  createAboutWindow();
 });
 
 
+
+
+function createWhatisWindow() {
+
+  const whatisWindow = new BrowserWindow({
+    height: 400,
+    width: 800,
+    parent: mainWindow,
+    modal: true,         // Rende la finestra bloccante (modale)
+    resizable: false,    // Disabilita il ridimensionamento (toglie l'icona resize)
+    minimizable: false,  // Opzionale: toglie il tasto per iconizzare
+    maximizable: false,  // Toglie il tasto "ingrandisci"
+    show: false,         // Evita il "lampo" bianco al caricamento      
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+    },
+  });
+
+  whatisWindow.setMenu(null);
+
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    whatisWindow.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/whatis.html`);
+  } else {
+    whatisWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/whatis.html`));
+  }
+
+  whatisWindow.once('ready-to-show', () => {
+    whatisWindow.show();
+  });
+
+}
+
+
+// Ascolta il messaggio "open-about-window" dal Renderer
+ipcMain.on('window:whatis', () => {
+  createWhatisWindow();
+});
