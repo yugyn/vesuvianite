@@ -8,7 +8,13 @@ const MineralSave = () => {
 
     const navigate = useNavigate();
     const { id } = useParams();
-    const [element, setElement] = useState({name: '', typology: '0', formula: '', crystal_system_id: '', mineral_class_id: ''});
+    const [element, setElement] = useState({
+        name: '', 
+        typology: '0', 
+        formula: '', 
+        crystal_system_id: '', 
+        mineral_class_id: '',
+    });
     const [crystalSystems, setCrystalSystems] = useState(null);
     const [mineralClasses, setMineralClasses] = useState(null);
     const [error, setError] = useState(null);

@@ -15,10 +15,10 @@ const api = {
     getAllCrystalSystems: () => ipcRenderer.invoke('crystalSystem:getAll'),
     getCrystalSystem: (id) => ipcRenderer.invoke('crystalSystem:get', id),
 
-    getAllMinerals: () => ipcRenderer.invoke('mineral:getAll'),
     getMineral: (id) => ipcRenderer.invoke('mineral:get', id),
+    getAllMinerals: (params) => ipcRenderer.invoke('mineral:getAll', params),
+    getAllMineralsCount: (params) => ipcRenderer.invoke('mineral:getAllCounts', params),
     getAllMineralsByElement: (params) => ipcRenderer.invoke('mineral:getAllByElement', params),
-    getAllMineralsCount: () => ipcRenderer.invoke('mineral:getAllCounts'),
     saveMineral: (params) => ipcRenderer.invoke('mineral:save', params),
     deleteMineral: (id) => ipcRenderer.invoke('mineral:delete', id),
 

@@ -12,11 +12,12 @@ export const MINERAL_TYPOLOGY_REAL = 0;
 export const MINERAL_TYPOLOGY_VIRTUAL = 1;
 
 export const MINERAL_FILTER_ALL = 0;
-export const MINERAL_FILTER_REAL = 1;
-export const MINERAL_FILTER_VIRTUAL = 2;
-export const MINERAL_FILTER_NORMAL = 3;
-export const MINERAL_FILTER_FUMAROLIC = 4;
-export const MINERAL_FILTER_BOTH = 5;
+export const MINERAL_FILTER_BYSEARCH = 1;
+export const MINERAL_FILTER_REAL = 10;
+export const MINERAL_FILTER_VIRTUAL = 11;
+export const MINERAL_FILTER_NORMAL = 20;
+export const MINERAL_FILTER_FUMAROLIC = 21;
+export const MINERAL_FILTER_BOTH = 22;
 
 
 export const ICON_MINERAL_GENESYS_UNDEFINED = CheckCircleFill;

@@ -38,8 +38,8 @@ export default function ipcHandlers(db) {
         return crystalSystemDB.get(id);
     });
 
-    ipcMain.handle('mineral:getAll', () => {
-        return mineralDB.getAll();
+    ipcMain.handle('mineral:getAll', (_, params) => {
+        return mineralDB.getAll(params);
     });
     ipcMain.handle('mineral:get', (_, id) => {
         return mineralDB.get(id);
@@ -47,8 +47,8 @@ export default function ipcHandlers(db) {
     ipcMain.handle('mineral:getAllByElement', (_, params) => {
         return mineralDB.getAllByElement(params.elementName, params.elementId, params.filter);
     });
-    ipcMain.handle('mineral:getAllCounts', () => {
-        return mineralDB.getAllCounts();
+    ipcMain.handle('mineral:getAllCounts', (_, params) => {
+        return mineralDB.getAllCounts(params);
     });
     ipcMain.handle('mineral:save', (_, params) => {
         return mineralDB.save(params);

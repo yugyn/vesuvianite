@@ -14,7 +14,15 @@ class CrystalSystemDB {
 
     getAll() {
 
-        const stmt = this.db.prepare('SELECT * FROM crystal_system ORDER BY sort');
+        const query = `
+            SELECT cs.*,
+            COUNT(m.id) AS count_mineral 
+            FROM crystal_system AS cs 
+            LEFT JOIN mineral as m ON m.crystal_system_id = cs.id
+            GROUP BY cs.id
+            ORDER BY cs.sort
+        `
+        const stmt = this.db.prepare(query);
         return stmt.all();
 
     }

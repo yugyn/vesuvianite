@@ -57,7 +57,7 @@ const CrystalSystems = () => {
                 >
                     <td>{item.name}</td>
                     <td>0</td>
-                    <td>0</td>
+                    <td>{item.count_mineral}</td>
                 </tr>
                 ))}
             </tbody>

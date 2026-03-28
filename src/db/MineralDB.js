@@ -14,16 +14,38 @@ class MineralDB {
 
     }
 
-    getAll() {
+    getAll(params) {
 
-        const query = `
+        const filters = Array();
+        let query = `
             SELECT m.*, cs.id as csId, cs.name as csName, mc.id as mcId, mc.name as mcName FROM mineral AS m 
             LEFT JOIN crystal_system AS cs ON m.crystal_system_id = cs.id 
             LEFT JOIN mineral_class AS mc ON m.mineral_class_id = mc.id 
-            ORDER BY m.name
+            WHERE m.deleted = 0 
         `;
+
+        if(params.content !== null && params.content !== undefined && params.content !== '') {
+            query += ' AND m.name like ?';
+            filters.push(`%${params.content}%`);
+        }
+        if(params.typology !== null && params.typology !== undefined && params.typology !== '') {
+            query += ' AND m.typology = ?';
+            filters.push(params.typology);
+        }
+        if(params.crystalSystem && params.crystalSystem !== '') {
+            query += ' AND m.crystal_system_id = ?';
+            filters.push(params.crystalSystem);
+        }
+        if(params.mineralClass && params.mineralClass !== '') {
+            query += ' AND m.mineral_class_id = ?';
+            filters.push(params.mineralClass);
+        }
+
+        query += ' ORDER BY m.name';
+
         const stmt = this.db.prepare(query);
-        return stmt.all();
+
+        return stmt.all(filters);
 
     }
 
@@ -34,7 +56,7 @@ class MineralDB {
             SELECT m.*, cs.id as csId, cs.name as csName, mc.id as mcId, mc.name as mcName FROM mineral AS m 
             LEFT JOIN crystal_system AS cs ON m.crystal_system_id = cs.id 
             LEFT JOIN mineral_class AS mc ON m.mineral_class_id = mc.id 
-            WHERE true
+            WHERE m.deleted = 0 
         `;
 
         if(elementName && elementId) {
@@ -66,7 +88,7 @@ class MineralDB {
 
         let query = `
             SELECT count(*) AS total FROM mineral
-            WHERE true
+            WHERE deleted = 0 
         `;
 
         const filters = Array();
@@ -156,6 +178,7 @@ class MineralDB {
                 , crystal_system_id = ?
                 , mineral_class_id = ?
                 , key = ? 
+                , date_update = CURRENT_TIMESTAMP
                 WHERE id = ?
             `;
             const values = Array();
@@ -188,11 +211,35 @@ class MineralDB {
 
         try {
 
-            const query = `DELETE FROM mineral WHERE id = ?`;
-            const stmt = this.db.prepare(query);
-            stmt.run(id);
-            return {
-                success: true,
+            const element = this.get(id);
+            if(element) {
+
+                if(element.deleted) {
+
+                    const query = `DELETE FROM mineral WHERE id = ?`;
+                    const stmt = this.db.prepare(query);
+                    stmt.run(id);
+                    return {
+                        success: true,
+                    }
+
+                } else {
+
+                    const query = `
+                        UPDATE mineral
+                        set deleted = 1
+                        , date_delete = CURRENT_TIMESTAMP
+                        WHERE id = ?
+                    `;
+                    const stmt = this.db.prepare(query);
+                    stmt.run(id);    
+                    return {
+                        success: true,
+                        id: id,
+                    }
+
+                }
+
             }
 
         } catch(err) {
