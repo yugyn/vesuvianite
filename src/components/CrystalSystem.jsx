@@ -65,11 +65,13 @@ const CrystalSystem = () => {
                     </tbody>
                 </table>        
 
-                <MineralList 
-                    elementName={ELEMENT_CRYSTALSYSTEM} 
-                    elementId={element.id}
-                    subList={true}
-                />
+                <div className='content-sublist'>
+                    <MineralList 
+                        elementName={ELEMENT_CRYSTALSYSTEM} 
+                        elementId={element.id}
+                        subList={true}
+                    />
+                </div>
 
             </div>
         </>

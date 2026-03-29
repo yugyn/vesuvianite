@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { VIEW_TABLE, VIEW_LIST, MINERAL_FILTER_ALL, MINERAL_FILTER_BYSEARCH, MINERAL_FILTER_REAL, MINERAL_FILTER_VIRTUAL, MINERAL_GENESIS_NORMAL, MINERAL_GENESIS_FUMAROLIC, MINERAL_GENESIS_BOTH } from '../../costants';
+import { VIEW_TABLE, VIEW_LIST, MINERAL_FILTER_ALL, MINERAL_FILTER_REAL, MINERAL_FILTER_VIRTUAL, MINERAL_GENESIS_NORMAL, MINERAL_GENESIS_FUMAROLIC, MINERAL_GENESIS_BOTH, ELEMENT_CRYSTALSYSTEM } from '../../costants';
 import { MINERAL_TYPOLOGY_REAL, MINERAL_TYPOLOGY_VIRTUAL } from "../../costants";
 import { mineralFullname } from '../../utils/mineralUtils';
 import { AppIcons } from '../../utils/iconUtils';
@@ -31,6 +31,8 @@ const MineralList = ({ elementName, elementId, subList }) => {
         typology: null,
         crystalSystem: null,
         mineralClass: null,
+        elementName: elementName,
+        elementId: elementId,
     };    
     const [filters, setFilters] = useState(initialFilters);
     const [reallyFilters, setReallyFilters] = useState(initialFilters);
@@ -47,7 +49,7 @@ const MineralList = ({ elementName, elementId, subList }) => {
                 setError("Not found.");
             }
 
-            const dataCounts = await window.electronAPI.getAllMineralsCount();
+            const dataCounts = await window.electronAPI.getAllMineralsCount(reallyFilters);
             if(dataCounts) {
                 setCounts(dataCounts);
             }
@@ -102,11 +104,11 @@ const MineralList = ({ elementName, elementId, subList }) => {
             typology: typology,
             crystalSystem: crystalSystem,
             mineralClass: mineralClass,
+            elementName: elementName,
+            elementId: elementId,
         });
 
         setReallyFilters(filters);
-
-        setFilterView(MINERAL_FILTER_BYSEARCH);
 
     }
 
@@ -128,6 +130,8 @@ const MineralList = ({ elementName, elementId, subList }) => {
             filters.typology = MINERAL_TYPOLOGY_VIRTUAL;
         }
 
+        setReallyFilters(filters);
+        
         loadAll();
 
     };
@@ -148,15 +152,17 @@ const MineralList = ({ elementName, elementId, subList }) => {
                 <div className='col-md-10'>
                     <div className='row'>
                         <div className='col-md-9'>
+                            {!subList && (
+                                <button 
+                                    className={`btn btn-primary btn-sm me-5`}
+                                    onClick={() => navigate(`/mineralSave/0`)}
+                                    title='Aggiungi minerale'
+                                >
+                                    <AppIcons.Add />
+                                </button>
+                            )}
                             <button 
-                                className={`btn btn-primary btn-sm me-5`}
-                                onClick={() => navigate(`/mineralSave/0`)}
-                                title='Aggiungi minerale'
-                            >
-                                <AppIcons.Add />
-                            </button>
-                            <button 
-                                className={`btn btn-outline-secondary btn-sm me-3 ${filterView === MINERAL_FILTER_ALL || !filter ? 'active' : ''}`}
+                                className={`btn btn-outline-secondary btn-sm me-3 ${filterView === MINERAL_FILTER_ALL ? 'active' : ''}`}
                                 onClick={() => changeFilterView(MINERAL_FILTER_ALL)}
                             >
                                 Tutti: {counts.total}
@@ -194,9 +200,11 @@ const MineralList = ({ elementName, elementId, subList }) => {
                                         <th scope='col'>
                                             Formula
                                             </th>
-                                        <th scope='col'>
-                                            Sistema
-                                        </th>
+                                        {!(elementName == ELEMENT_CRYSTALSYSTEM) && (
+                                            <th scope='col'>
+                                                Sistema
+                                            </th>
+                                        )}
                                         <th scope='col'>
                                             Classe
                                         </th>
@@ -211,14 +219,16 @@ const MineralList = ({ elementName, elementId, subList }) => {
                                         >
                                             <td>{mineralFullname(item)}</td>
                                             <td>{item.formula}</td>
-                                            <td>
-                                                <span 
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        navigate(`/crystalSystem/${item.csId}`);
-                                                    }}
-                                                >{item.csName}</span>
-                                            </td>
+                                            {!(elementName == ELEMENT_CRYSTALSYSTEM) && (
+                                                <td>
+                                                    <span 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/crystalSystem/${item.csId}`);
+                                                        }}
+                                                    >{item.csName}</span>
+                                                </td>
+                                            )}
                                             <td>
                                                 <span 
                                                     onClick={(e) => {
@@ -256,7 +266,7 @@ const MineralList = ({ elementName, elementId, subList }) => {
                         </div>
                     )}
                 </div>
-                <div className='col-md-2'>
+                <div className='col-md-2 content-search'>
                     <div className="row">
                         <div className='col-md-12 text-end'>
                             <div className='btn-group' role='group'>
@@ -329,7 +339,7 @@ const MineralList = ({ elementName, elementId, subList }) => {
                                 </select>
                             </div>
                         </div>                
-                        <div className="row mt-2">
+                        <div className="row mt-2" style={{display: (elementName == ELEMENT_CRYSTALSYSTEM ? 'none' : '')}}>
                             <label className="col-form-label">
                                 <small>Sistema è:</small>
                             </label>

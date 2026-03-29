@@ -14,7 +14,7 @@ class MineralDB {
 
     }
 
-    getAll(params) {
+    getAll(params, asCount) {
 
         const filters = Array();
         let query = `
@@ -51,6 +51,13 @@ class MineralDB {
             filters.push(params.mineralClass);
         }
 
+        if(params.elementName && params.elementId) {
+            if(params.elementName == ELEMENT_CRYSTALSYSTEM) {
+                query += ' AND m.crystal_system_id = ?'
+                filters.push(params.elementId);
+            }
+        }
+
         query += ' ORDER BY m.name';
 
         const stmt = this.db.prepare(query);
@@ -59,49 +66,48 @@ class MineralDB {
 
     }
 
-    getAllByElement(elementName, elementId, filter) {
+    getCountByFilter(params, filter) {
 
         const filters = Array();
-        let query = `
-            SELECT m.*, cs.id as csId, cs.name as csName, mc.id as mcId, mc.name as mcName FROM mineral AS m 
-            LEFT JOIN crystal_system AS cs ON m.crystal_system_id = cs.id 
-            LEFT JOIN mineral_class AS mc ON m.mineral_class_id = mc.id 
-            WHERE m.deleted = 0 
-        `;
-
-        if(elementName && elementId) {
-            if(elementName == ELEMENT_CRYSTALSYSTEM) {
-                query += ' AND m.crystal_system_id = ?'
-                filters.push(elementId);
-            }
-        }
-
-        if(filter) {
-            if(filter == MINERAL_FILTER_REAL) {
-                query += ' AND typology = ?';
-                filters.push(MINERAL_TYPOLOGY_REAL);
-            } else if(filter == MINERAL_FILTER_VIRTUAL) {
-                query += ' AND typology = ?';
-                filters.push(MINERAL_TYPOLOGY_VIRTUAL);
-            }
-
-        }
-
-        query += ' ORDER BY m.name';
-        
-        const stmt = this.db.prepare(query);
-        return stmt.all(filters);
-
-    }
-
-    getCountByFilter(filter) {
-
         let query = `
             SELECT count(*) AS total FROM mineral
-            WHERE deleted = 0 
+            WHERE true 
         `;
 
-        const filters = Array();
+        if(params.deleted !== null && params.deleted !== '') {
+            query += ' AND deleted = 0';
+        } else {
+            query += ' AND deleted = 1';
+        }
+
+        if(params.content !== null && params.content !== undefined && params.content !== '') {
+            query += ' AND name like ?';
+            filters.push(`%${params.content}%`);
+        }
+        if(params.typology && params.typology !== '') {
+            query += ' AND typology = ?';
+            filters.push(params.typology);
+        }
+        if(params.genesis && params.genesis !== '') {
+            query += ' AND genesis = ?';
+            filters.push(params.genesis);
+        }
+        if(params.crystalSystem && params.crystalSystem !== '') {
+            query += ' AND crystal_system_id = ?';
+            filters.push(params.crystalSystem);
+        }
+        if(params.mineralClass && params.mineralClass !== '') {
+            query += ' AND mineral_class_id = ?';
+            filters.push(params.mineralClass);
+        }
+
+        if(params.elementName && params.elementId) {
+            if(params.elementName == ELEMENT_CRYSTALSYSTEM) {
+                query += ' AND crystal_system_id = ?'
+                filters.push(params.elementId);
+            }
+        }
+
         if(filter) {
 
             if(filter == MINERAL_FILTER_REAL) {
@@ -120,12 +126,12 @@ class MineralDB {
 
     }
 
-    getAllCounts() {
+    getAllCounts(params) {
 
         return {
-            total: this.getCountByFilter()
-            , real: this.getCountByFilter(MINERAL_FILTER_REAL)
-            , virtual: this.getCountByFilter(MINERAL_FILTER_VIRTUAL)
+            total: this.getCountByFilter(params)
+            , real: this.getCountByFilter(params, MINERAL_FILTER_REAL)
+            , virtual: this.getCountByFilter(params, MINERAL_FILTER_VIRTUAL)
             , normal: 100
             , fumarolic: 101
             , both: 102
@@ -259,6 +265,7 @@ class MineralDB {
             return {
                 error: err.message,
             }
+            
         }
 
     }

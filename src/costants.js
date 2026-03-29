@@ -15,7 +15,6 @@ export const MINERAL_GENESIS_FUMAROLIC = 'f';
 export const MINERAL_GENESIS_BOTH = 'b';
 
 export const MINERAL_FILTER_ALL = 0;
-export const MINERAL_FILTER_BYSEARCH = 1;
 export const MINERAL_FILTER_REAL = 10;
 export const MINERAL_FILTER_VIRTUAL = 11;
 export const MINERAL_FILTER_NORMAL = 20;
