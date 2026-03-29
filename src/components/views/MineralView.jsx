@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { Link } from 'react-router-dom';
+import { mineralFullname } from '../../utils/mineralUtils';
 
-const Mineral = () => {
+const MineralView = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -90,7 +91,7 @@ const Mineral = () => {
                         {notification}
                     </div>
                 )}
-                <h1>Mineral</h1>
+                <h1>{mineralFullname(element)}</h1>
                 <Link to="/minerals" className="btn">Torna a Minerali</Link>
                 <button 
                     onClick={() => navigate(`/mineralSave/${element.id}`)}
@@ -131,4 +132,4 @@ const Mineral = () => {
 };
 
 
-export default Mineral;
+export default MineralView;

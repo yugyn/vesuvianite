@@ -2,9 +2,9 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import MineralsList from '../lists/MineralsList';
+import MineralList from '../lists/MineralList'
 
-const Minerals = () => {
+const MineralListView = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -41,13 +41,7 @@ const Minerals = () => {
                         {notification}
                     </div>
                 )}
-                <Link to="/" className="btn">Torna alla Home</Link>
-                <button 
-                    onClick={() => navigate(`/mineralSave/0`)}
-                >
-                    + Aggiungi
-                </button>
-                <MineralsList />
+                <MineralList />
             </div>
 
         </>
@@ -56,4 +50,4 @@ const Minerals = () => {
 };
 
 
-export default Minerals;
+export default MineralListView;

@@ -1,11 +1,11 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { VIEW_TABLE, VIEW_LIST, MINERAL_FILTER_ALL, MINERAL_FILTER_BYSEARCH, MINERAL_FILTER_REAL, MINERAL_FILTER_VIRTUAL } from '../../costants';
+import { VIEW_TABLE, VIEW_LIST, MINERAL_FILTER_ALL, MINERAL_FILTER_BYSEARCH, MINERAL_FILTER_REAL, MINERAL_FILTER_VIRTUAL, MINERAL_GENESIS_NORMAL, MINERAL_GENESIS_FUMAROLIC, MINERAL_GENESIS_BOTH } from '../../costants';
 import { MINERAL_TYPOLOGY_REAL, MINERAL_TYPOLOGY_VIRTUAL } from "../../costants";
-import { mineralName } from '../../utils/mineralUtils';
+import { mineralFullname } from '../../utils/mineralUtils';
+import { AppIcons } from '../../utils/iconUtils';
 
-const MineralsList = ({ elementName, elementId, subList }) => {
+const MineralList = ({ elementName, elementId, subList }) => {
 
     const navigate = useNavigate();
     
@@ -14,39 +14,42 @@ const MineralsList = ({ elementName, elementId, subList }) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState(VIEW_TABLE);
-    const [filter, setFilter] = useState(MINERAL_FILTER_ALL);
-    const [count, setCount] = useState({
-            totals: 0
-            , reals: 0
-            , virtuals: 0
-            , normals: 0
-            , fumarolics: 0
-            , boths: 0
+    const [filterView, setFilterView] = useState(MINERAL_FILTER_ALL);
+    const [counts, setCounts] = useState({
+            total: 0
+            , real: 0
+            , virtual: 0
+            , normal: 0
+            , fumarolic: 0
+            , both: 0
     });
     const [crystalSystems, setCrystalSystems] = useState(null);
     const [mineralClasses, setMineralClasses] = useState(null);
-    const [filters, setFilters] = useState({
+
+    const initialFilters = {
         content: null,
         typology: null,
         crystalSystem: null,
         mineralClass: null,
-    });
+    };    
+    const [filters, setFilters] = useState(initialFilters);
+    const [reallyFilters, setReallyFilters] = useState(initialFilters);
 
 
     async function loadAll() {
 
         try {
 
-            const data = await window.electronAPI.getAllMinerals(filters);
+            const data = await window.electronAPI.getAllMinerals(reallyFilters);
             if(data) {
                 setElements(data);
             } else {
                 setError("Not found.");
             }
 
-            const dataCount = await window.electronAPI.getAllMineralsCount();
-            if(dataCount) {
-                setCount(dataCount);
+            const dataCounts = await window.electronAPI.getAllMineralsCount();
+            if(dataCounts) {
+                setCounts(dataCounts);
             }
 
             const dataCS = await window.electronAPI.getAllCrystalSystems();
@@ -70,7 +73,7 @@ const MineralsList = ({ elementName, elementId, subList }) => {
 
     useEffect( () => {
         loadAll(MINERAL_FILTER_ALL);
-    }, [filters]);
+    }, [reallyFilters]);
 
     if (error) return <div>{error}</div>;
     if (loading) return <div>Caricamento in corso...</div>;
@@ -101,15 +104,21 @@ const MineralsList = ({ elementName, elementId, subList }) => {
             mineralClass: mineralClass,
         });
 
-        loadAll();
+        setReallyFilters(filters);
 
-        setFilter(MINERAL_FILTER_BYSEARCH);
+        setFilterView(MINERAL_FILTER_BYSEARCH);
 
     }
 
-    const changeFilter = (filter) => {
+    const handleClear = () => {
+        setError(null);
+        setFilters(initialFilters);        
+        setReallyFilters(initialFilters);        
+    };    
 
-        setFilter(filter);
+    const changeFilterView = (filter) => {
+
+        setFilterView(filter);
 
         if(filter == MINERAL_FILTER_ALL) {
             filters.typology = null;
@@ -126,7 +135,7 @@ const MineralsList = ({ elementName, elementId, subList }) => {
 
     return (
         <>
-            <div className='row'>
+            <div className='row mb-2'>
                 <div className='col'>
                     {subList ? (
                         <h4>Minerali ({elements.length})</h4>
@@ -134,65 +143,61 @@ const MineralsList = ({ elementName, elementId, subList }) => {
                         <h1>Minerali ({elements.length})</h1>
                     )}
                 </div>
-                <div className='col d-flex justify-content-end'>
-                    <input 
-                        style={{width: '200px'}}
-                        type='search' 
-                        className='form-control' 
-                        placeholder='Cerca minerale...' 
-                        onChange={(e) => setSearch(e.target.value)} 
-                    />
-                    <div className='btn-group' role='group'>
-                        <button 
-                            className={`btn btn-outline-primary ${view === VIEW_TABLE ? 'active' : ''}`}
-                            onClick={() => changeView(VIEW_TABLE)}
-                        >
-                            Cambia in tabella
-                        </button>                    
-                        <button 
-                            className={`btn btn-outline-primary ${view === VIEW_LIST ? 'active' : ''}`}
-                            onClick={() => changeView(VIEW_LIST)}
-                        >
-                            Cambia in lista
-                        </button>                    
-                    </div>
-                </div>
             </div>
             <div className='row'>
                 <div className='col-md-10'>
-                    <button 
-                        className={`btn btn-outline-primary ${filter === MINERAL_FILTER_ALL || !filter ? 'active' : ''}`}
-                        onClick={() => changeFilter(MINERAL_FILTER_ALL)}
-                    >
-                        Tutti: {count.totals}
-                    </button>                    
-                    <button 
-                        className={`btn btn-outline-primary ${filter === MINERAL_FILTER_REAL ? 'active' : ''}`}
-                        onClick={() => changeFilter(MINERAL_FILTER_REAL)}
-                    >
-                        Reali: {count.reals}
-                    </button>                    
-                    <button 
-                        className={`btn btn-outline-primary ${filter === MINERAL_FILTER_VIRTUAL ? 'active' : ''}`}
-                        onClick={() => changeFilter(MINERAL_FILTER_VIRTUAL)}
-                    >
-                        Virtuali: {count.virtuals}
-                    </button>                    
+                    <div className='row'>
+                        <div className='col-md-9'>
+                            <button 
+                                className={`btn btn-primary btn-sm me-5`}
+                                onClick={() => navigate(`/mineralSave/0`)}
+                                title='Aggiungi minerale'
+                            >
+                                <AppIcons.Add />
+                            </button>
+                            <button 
+                                className={`btn btn-outline-secondary btn-sm me-3 ${filterView === MINERAL_FILTER_ALL || !filter ? 'active' : ''}`}
+                                onClick={() => changeFilterView(MINERAL_FILTER_ALL)}
+                            >
+                                Tutti: {counts.total}
+                            </button>                    
+                            <button 
+                                className={`btn btn-outline-secondary btn-sm me-1 ${filterView === MINERAL_FILTER_REAL ? 'active' : ''}`}
+                                onClick={() => changeFilterView(MINERAL_FILTER_REAL)}
+                            >
+                                Reali: {counts.real}
+                            </button>                    
+                            <button 
+                                className={`btn btn-outline-secondary btn-sm me-1 ${filterView === MINERAL_FILTER_VIRTUAL ? 'active' : ''}`}
+                                onClick={() => changeFilterView(MINERAL_FILTER_VIRTUAL)}
+                            >
+                                Virtuali: {counts.virtual}
+                            </button>                    
+                        </div>
+                        <div className='col-md-3'>
+                            <input 
+                                type='search' 
+                                className='form-control form-control-sm' 
+                                placeholder='Ricerca rapida...' 
+                                onChange={(e) => setSearch(e.target.value)} 
+                            />
+                        </div>
+                    </div>
                     {view == 0 ? (
                         <div className='table-responsive' style={{marginTop: '10px'}}>
-                            <table className="table table-bordered table-hover datatable-table">
+                            <table className="table table-bordered table-hover datatable-table" style={{ tableLayout: 'fixed' }}>
                                 <thead className="table-light">
                                     <tr>
-                                        <th className='col'>
+                                        <th scope='col'>
                                             Minerale
                                         </th>
-                                        <th className='col'>
+                                        <th scope='col'>
                                             Formula
                                             </th>
-                                        <th className='col'>
+                                        <th scope='col'>
                                             Sistema
                                         </th>
-                                        <th className='col'>
+                                        <th scope='col'>
                                             Classe
                                         </th>
                                     </tr>
@@ -204,7 +209,7 @@ const MineralsList = ({ elementName, elementId, subList }) => {
                                             onClick={() => navigate(`/mineral/${item.id}`)}
                                             style={{ cursor: 'pointer' }}
                                         >
-                                            <td>{mineralName(item)}</td>
+                                            <td>{mineralFullname(item)}</td>
                                             <td>{item.formula}</td>
                                             <td>
                                                 <span 
@@ -252,26 +257,53 @@ const MineralsList = ({ elementName, elementId, subList }) => {
                     )}
                 </div>
                 <div className='col-md-2'>
+                    <div className="row">
+                        <div className='col-md-12 text-end'>
+                            <div className='btn-group' role='group'>
+                                <button 
+                                    className={`btn btn-sm btn-outline-secondary ${view === VIEW_TABLE ? 'active' : ''}`}
+                                    onClick={() => changeView(VIEW_TABLE)}
+                                    title='Cambia in tabella'
+                                >
+                                    <AppIcons.View.Table />
+                                </button>                    
+                                <button 
+                                    className={`btn btn-sm btn-outline-secondary ${view === VIEW_LIST ? 'active' : ''}`}
+                                    onClick={() => changeView(VIEW_LIST)}
+                                    title='Cambia in lista'
+                                >
+                                    <AppIcons.View.List />
+                                </button>                    
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+
+                    <small><b><AppIcons.Search/> Cerca minerali</b></small>
                     <form onSubmit={handleSearch}>
-                        <div className="row">
+                        <div className="row mt-2">
                             <label className="col-form-label">
-                                Nome contiene:
+                                <small>Nome contiene:</small>
                             </label>
                             <div>
                                 <input 
-                                    className="form-control"
+                                    className="form-control form-control-sm"
                                     id="searchContent" 
+                                    value={filters.content || ""}
+                                    onChange={(e) => setFilters({...filters, content: e.target.value})}
                                 />
                             </div>
                         </div>
-                        <div className="row">
+                        <div className="row mt-2">
                             <label className="col-form-label">
-                                Tipo è:
+                                <small>Tipo è:</small>
                             </label>
                             <div>
                                 <select 
-                                    className="form-select"
+                                    className="form-select form-select-sm"
                                     id="searchTypology"
+                                    value={filters.typology || ""}
+                                    onChange={(e) => setFilters({...filters, typology: e.target.value})}
                                 >
                                     <option value=''>- qualsiasi -</option>
                                     <option value={MINERAL_TYPOLOGY_REAL}>Reale</option>
@@ -279,14 +311,34 @@ const MineralsList = ({ elementName, elementId, subList }) => {
                                 </select>
                             </div>
                         </div>                
-                        <div className="row">
+                        <div className="row mt-2">
                             <label className="col-form-label">
-                                Sistema è:
+                                <small>Genesi è:</small>
                             </label>
                             <div>
                                 <select 
-                                    className="form-select"
+                                    className="form-select form-select-sm"
+                                    id="searchGenesis"
+                                    value={filters.genesis || ""}
+                                    onChange={(e) => setFilters({...filters, genesis: e.target.value})}
+                                >
+                                    <option value=''>- qualsiasi -</option>
+                                    <option value={MINERAL_GENESIS_NORMAL}>Normale</option>
+                                    <option value={MINERAL_GENESIS_FUMAROLIC}>Fumarolico</option>
+                                    <option value={MINERAL_GENESIS_BOTH}>Sia normale sia fumarolico</option>
+                                </select>
+                            </div>
+                        </div>                
+                        <div className="row mt-2">
+                            <label className="col-form-label">
+                                <small>Sistema è:</small>
+                            </label>
+                            <div>
+                                <select 
+                                    className="form-select form-select-sm"
                                     id="searchCrystalSystem"
+                                    value={filters.crystalSystem || ""}
+                                    onChange={(e) => setFilters({...filters, crystalSystem: e.target.value})}
                                 >
                                     <option value=''>- qualsiasi -</option>
                                     {crystalSystems.map((item) => (
@@ -298,14 +350,16 @@ const MineralsList = ({ elementName, elementId, subList }) => {
                                 </select>
                             </div>
                         </div>                
-                        <div className="row">
+                        <div className="row mt-2">
                             <label className="col-form-label">
-                                Classe è:
+                                <small>Classe è:</small>
                             </label>
                             <div>
                                 <select 
-                                    className="form-select"
+                                    className="form-select form-select-sm"
                                     id="searchMineralClass"
+                                    value={filters.mineralClass || ""}
+                                    onChange={(e) => setFilters({...filters, mineralClass: e.target.value})}
                                 >
                                     <option value=''>- qualsiasi -</option>
                                     {mineralClasses.map((item) => (
@@ -317,11 +371,24 @@ const MineralsList = ({ elementName, elementId, subList }) => {
                                 </select>
                             </div>
                         </div>                
-                        <hr/>
 
-                        <button 
-                            className="btn btn-primary"
-                        >Cerca</button>
+                        <div className="d-flex mt-4">
+                            <div>
+                                <button 
+                                    className="btn btn-primary btn-sm"
+                                ><AppIcons.Search/> Cerca</button>
+                            </div>
+                            <div className="ms-auto">
+                                <button 
+                                    type="button" 
+                                    className="btn btn-sm btn-outline-primary " 
+                                    onClick={handleClear}
+                                    title='Resetta campi e ricarica'
+                                >
+                                    <AppIcons.ClearFields />
+                                </button>                    
+                            </div>
+                        </div>
 
                     </form>
                 </div>
@@ -332,4 +399,4 @@ const MineralsList = ({ elementName, elementId, subList }) => {
 };
 
 
-export default MineralsList;
+export default MineralList;

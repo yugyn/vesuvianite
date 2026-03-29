@@ -1,17 +1,26 @@
-import { MINERAL_TYPOLOGY_VIRTUAL, ICON_MINERAL_GENESYS_UNDEFINED, ICON_MINERAL_GENESYS_NORMAL, ICON_MINERAL_GENESYS_FUMAROLIC, ICON_MINERAL_GENESYS_BOTH } from "../costants";
+import { MINERAL_GENESIS_BOTH, MINERAL_GENESIS_FUMAROLIC, MINERAL_GENESIS_NORMAL, MINERAL_TYPOLOGY_VIRTUAL } from "../costants";
 import { AppIcons } from '../utils/iconUtils';
 
-export const mineralName = (mineral) => {
+export const mineralFullname = (mineral) => {
 
     let name = mineral.name;
     if(mineral.typology == MINERAL_TYPOLOGY_VIRTUAL) {
         name = `'${name}'`;
     } 
 
+    const genesisIcon = () => {
+        switch (mineral.genesis) {
+            case MINERAL_GENESIS_NORMAL: return <AppIcons.Mineral.Genesis.Normal />;
+            case MINERAL_GENESIS_FUMAROLIC: return <AppIcons.Mineral.Genesis.Fumarolic />;
+            case MINERAL_GENESIS_BOTH: return <AppIcons.Mineral.Genesis.Both />;
+            default: return <AppIcons.Mineral.Genesis.Undefined />;
+        }
+    }
+
     return (
         <>
-            <AppIcons.MineralGenesysUndefined /> {name}
+            <small><small>{genesisIcon()}</small></small> {name}
         </>
     )
 
-};
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import MineralsList from './lists/MineralsList';
+import MineralList from './lists/MineralList';
 import { ELEMENT_CRYSTALSYSTEM } from '../costants';
 
 const CrystalSystem = () => {
@@ -65,7 +65,7 @@ const CrystalSystem = () => {
                     </tbody>
                 </table>        
 
-                <MineralsList 
+                <MineralList 
                     elementName={ELEMENT_CRYSTALSYSTEM} 
                     elementId={element.id}
                     subList={true}

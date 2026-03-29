@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { MINERAL_TYPOLOGY_REAL, MINERAL_TYPOLOGY_VIRTUAL } from "../../costants";
+import { MINERAL_TYPOLOGY_REAL, MINERAL_TYPOLOGY_VIRTUAL, MINERAL_GENESIS_NORMAL, MINERAL_GENESIS_FUMAROLIC, MINERAL_GENESIS_BOTH } from "../../costants";
 
 const MineralSave = () => {
 
@@ -10,7 +10,8 @@ const MineralSave = () => {
     const { id } = useParams();
     const [element, setElement] = useState({
         name: '', 
-        typology: '0', 
+        typology: MINERAL_TYPOLOGY_REAL, 
+        genesis: MINERAL_GENESIS_NORMAL, 
         formula: '', 
         crystal_system_id: '', 
         mineral_class_id: '',
@@ -65,6 +66,7 @@ const MineralSave = () => {
 
         const name = document.getElementById('name').value.trim();
         const typology = document.getElementById('typology').value;
+        const genesis = document.getElementById('genesis').value;
         const formula = document.getElementById('formula').value.trim();
         const crystalSystem = document.getElementById('crystalSystem').value;
         const mineralClass = document.getElementById('mineralClass').value;
@@ -73,6 +75,7 @@ const MineralSave = () => {
             id: (id ? id : 0),
             name: name,
             typology: typology,
+            genesis: genesis,
             formula: formula,
             crystalSystem: (crystalSystem == '' ? null : crystalSystem),
             mineralClass: (mineralClass == '' ? null : mineralClass),
@@ -92,14 +95,21 @@ const MineralSave = () => {
     return (
         <>
             <div style={{ padding: '20px' }}>
-                <h1>
-                    {id == 0 ? (
-                        'Aggiungi minerale'                    
-                    ) : (
-                        'Aggiorna minerale'
-                    )}
-                </h1>
-                <Link to="/minerals" className="btn">Torna a Minerali</Link>
+                {id == 0 ? (
+                    <>
+                        <Link to={`/minerals`} className="btn">Torna a Minerali</Link>
+                        <h1>
+                            Aggiungi minerale
+                        </h1>
+                    </>
+                ) : (
+                    <>
+                        <Link to={`/mineral/${element.id}`} className="btn">Torna a Minerale</Link>
+                        <h1>
+                            Aggiorna minerale
+                        </h1>
+                    </>
+                )}
 
                 <hr/>
 
@@ -129,6 +139,22 @@ const MineralSave = () => {
                             >
                                 <option value={MINERAL_TYPOLOGY_REAL}>Reale</option>
                                 <option value={MINERAL_TYPOLOGY_VIRTUAL}>Virtuale</option>
+                            </select>
+                        </div>
+                    </div>                
+                    <div className="mb-3 row">
+                        <label className="col-sm-2 col-form-label">
+                            Genesi
+                        </label>
+                        <div className="col-sm-4">
+                            <select 
+                                className="form-select"
+                                id="genesis"
+                                defaultValue={element.genesis}
+                            >
+                                <option value={MINERAL_GENESIS_NORMAL}>Normale</option>
+                                <option value={MINERAL_GENESIS_FUMAROLIC}>Fumarolico</option>
+                                <option value={MINERAL_GENESIS_BOTH}>Entrambi</option>
                             </select>
                         </div>
                     </div>                

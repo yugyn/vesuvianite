@@ -21,16 +21,26 @@ class MineralDB {
             SELECT m.*, cs.id as csId, cs.name as csName, mc.id as mcId, mc.name as mcName FROM mineral AS m 
             LEFT JOIN crystal_system AS cs ON m.crystal_system_id = cs.id 
             LEFT JOIN mineral_class AS mc ON m.mineral_class_id = mc.id 
-            WHERE m.deleted = 0 
+            WHERE true 
         `;
+
+        if(params.deleted !== null && params.deleted !== '') {
+            query += ' AND m.deleted = 0';
+        } else {
+            query += ' AND m.deleted = 1';
+        }
 
         if(params.content !== null && params.content !== undefined && params.content !== '') {
             query += ' AND m.name like ?';
             filters.push(`%${params.content}%`);
         }
-        if(params.typology !== null && params.typology !== undefined && params.typology !== '') {
+        if(params.typology && params.typology !== '') {
             query += ' AND m.typology = ?';
             filters.push(params.typology);
+        }
+        if(params.genesis && params.genesis !== '') {
+            query += ' AND m.genesis = ?';
+            filters.push(params.genesis);
         }
         if(params.crystalSystem && params.crystalSystem !== '') {
             query += ' AND m.crystal_system_id = ?';
@@ -113,12 +123,12 @@ class MineralDB {
     getAllCounts() {
 
         return {
-            totals: this.getCountByFilter()
-            , reals: this.getCountByFilter(MINERAL_FILTER_REAL)
-            , virtuals: this.getCountByFilter(MINERAL_FILTER_VIRTUAL)
-            , normals: 100
-            , fumarolics: 101
-            , boths: 102
+            total: this.getCountByFilter()
+            , real: this.getCountByFilter(MINERAL_FILTER_REAL)
+            , virtual: this.getCountByFilter(MINERAL_FILTER_VIRTUAL)
+            , normal: 100
+            , fumarolic: 101
+            , both: 102
         }
 
     }
@@ -138,12 +148,13 @@ class MineralDB {
         try {
 
             const query = `
-                INSERT INTO mineral(name, typology, formula, crystal_system_id, mineral_class_id, key) 
-                VALUES(?, ?, ?, ?, ?, ?)
+                INSERT INTO mineral(name, typology, genesis, formula, crystal_system_id, mineral_class_id, key) 
+                VALUES(?, ?, ?, ?, ?, ?, ?)
             `;
             const values = Array();
             values.push(params.name);
             values.push(params.typology);
+            values.push(params.genesis);
             values.push(params.formula);
             values.push(params.crystalSystem);
             values.push(params.mineralClass);
@@ -173,8 +184,9 @@ class MineralDB {
             const query = `
                 UPDATE mineral
                 set name = ?
-                , formula = ?
                 , typology = ?
+                , genesis = ?
+                , formula = ?
                 , crystal_system_id = ?
                 , mineral_class_id = ?
                 , key = ? 
@@ -184,6 +196,7 @@ class MineralDB {
             const values = Array();
             values.push(params.name);
             values.push(params.typology);
+            values.push(params.genesis);
             values.push(params.formula);
             values.push(params.crystalSystem);
             values.push(params.mineralClass);

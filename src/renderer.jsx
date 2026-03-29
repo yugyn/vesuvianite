@@ -20,8 +20,8 @@ import ToDo from './components/ToDo';
 import MineralClasses from './components/MineralClasses';
 import CrystalSystems from './components/CrystalSystems';
 import CrystalSystem from './components/CrystalSystem';
-import Minerals from './components/views/Minerals';
-import Mineral from './components/views/Mineral';
+import MineralListView from './components/views/MineralListView';
+import MineralView from './components/views/MineralView';
 import MineralSave from './components/views/MineralSave';
 
 class App extends Component {
@@ -83,8 +83,8 @@ class App extends Component {
           <Route path="/mineralClasses" element={<MineralClasses />} />
           <Route path="/crystalSystems" element={<CrystalSystems />} />
           <Route path="/crystalSystem/:id" element={<CrystalSystem />} />
-          <Route path="/minerals" element={<Minerals />} />
-          <Route path="/mineral/:id" element={<Mineral />} />
+          <Route path="/minerals" element={<MineralListView />} />
+          <Route path="/mineral/:id" element={<MineralView />} />
           <Route path="/mineralSave/:id" element={<MineralSave />} />
         </Routes>
       </HashRouter>
