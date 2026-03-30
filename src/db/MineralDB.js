@@ -8,7 +8,14 @@ class MineralDB {
 
     get(id) {
 
-        const stmt = this.db.prepare('SELECT * FROM mineral WHERE id = ?');
+        const query = `
+            SELECT m.*, cs.id as csId, cs.name as csName, mc.id as mcId, mc.name as mcName FROM mineral AS m 
+            LEFT JOIN crystal_system AS cs ON m.crystal_system_id = cs.id 
+            LEFT JOIN mineral_class AS mc ON m.mineral_class_id = mc.id 
+            WHERE m.id = ?
+        `;
+
+        const stmt = this.db.prepare(query);
         const element = stmt.get(id);
         return element;
 

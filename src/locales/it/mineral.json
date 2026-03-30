@@ -1,0 +1,30 @@
+{
+
+  "mineral": {
+
+    "label": "Minerale",
+    "formula": "Formula",
+    "list": {
+      "title": "Minerali"
+    },
+    "filter": {
+      "alls": "Tutti:",
+      "reals": "Reali:",
+      "virtuals": "Virtuali:"
+    },
+    "action": {
+      "add": "Aggiungi minerale"
+    },
+
+    "search": {
+      "title": "Cerca minerali",
+      "content": "Nome contiene:",
+      "typology": "Tipo è:",
+      "genesis": "Genesi è:",
+      "crystalSystem": "Sistema cristallino è:",
+      "mineralClass": "Classe è:"
+    }
+
+  }
+
+}

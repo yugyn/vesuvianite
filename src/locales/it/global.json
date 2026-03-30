@@ -1,0 +1,24 @@
+{
+
+  "view": {
+    "table": "Tabella",
+    "list": "Lista",
+    "action": {
+      "change": {
+        "table": "Cambia in tabella",
+        "list": "Cambia in lista"
+      }
+    }
+
+  },
+
+  "search": {
+    "quick": "Ricerca rapida...",
+    "any": "- qualsiasi -",
+    "action": {
+      "search": "Cerca",
+      "clear": "Pulisci campi"
+    }
+  }
+
+}

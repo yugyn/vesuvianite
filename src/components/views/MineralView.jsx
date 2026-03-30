@@ -1,11 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useParams } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { mineralFullname } from '../../utils/mineralUtils';
+import DetailsElement from '../elements/DetailsElement';
 
 const MineralView = () => {
+
+    const { t } = useTranslation();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,6 +29,18 @@ const MineralView = () => {
         }
 
     }
+
+    const details = useMemo(() => {
+
+        if (!element) return [];
+
+        return [
+            { label: t('mineral.label'), value: 'Coming soon...' },
+            { label: t('mineral.formula'), value: element.formula },
+            { label: t('crystalSystem.label'), value: element.csName },
+            { label: t('mineralClass.label'), value: element.mcName },
+        ];
+    }, [element]);
 
     async function loadElement() {
 
@@ -91,7 +106,7 @@ const MineralView = () => {
                         {notification}
                     </div>
                 )}
-                <h1>{mineralFullname(element)}</h1>
+                <h1>{element.name}</h1>
                 <Link to="/minerals" className="btn">Torna a Minerali</Link>
                 <button 
                     onClick={() => navigate(`/mineralSave/${element.id}`)}
@@ -104,26 +119,7 @@ const MineralView = () => {
                     Elimina
                 </button>
 
-                <table className="table table-bordered table-hover datatable-table" id="sortTable">
-                    <tbody id="tbody">
-                        <tr>
-                            <td>
-                                Minerale
-                            </td>
-                            <td>
-                                {element.name}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Tipo
-                            </td>
-                            <td>
-                                {element.typology}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>        
+                <DetailsElement data={details} />
 
             </div>
         </>

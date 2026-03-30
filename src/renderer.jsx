@@ -1,3 +1,4 @@
+import './i18n';
 import './styles/main.scss';
 import React, {Component} from 'react';
 import { HashRouter, Routes, Route, Link } from 'react-router-dom';
