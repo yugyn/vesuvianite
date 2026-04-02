@@ -1,5 +1,5 @@
 
-class ContainerDB {
+class AnnotationDB {
 
     constructor(db) {
         this.db = db
@@ -8,9 +8,8 @@ class ContainerDB {
     get(id) {
 
         const query = `
-            SELECT c.*, s.id as sId, s.name as sName FROM container AS c 
-            LEFT JOIN seller AS s ON c.seller_id = s.id 
-            WHERE c.id = ?
+            SELECT * FROM annotation 
+            WHERE id = ?
         `;
 
         const stmt = this.db.prepare(query);
@@ -23,60 +22,25 @@ class ContainerDB {
 
         const filters = Array();
         let query = `
-            SELECT c.*, s.id as sId, s.name as sName FROM container AS c 
-            LEFT JOIN seller AS s ON c.seller_id = s.id 
-            WHERE true 
+            SELECT * FROM annotation 
+            WHERE deleted = 0  
         `;
 
-        if(params.deleted !== null && params.deleted !== '') {
-            query += ' AND c.deleted = 0';
-        } else {
-            query += ' AND c.deleted = 1';
+        if(params.elementName !== null && params.elementName !== '') {
+            query += ' AND element_name = ?';
+            filters.push(params.elementName);
         }
 
-        if(params.content !== null && params.content !== undefined && params.content !== '') {
-            query += ' AND c.name like ?';
-            filters.push(`%${params.content}%`);
+        if(params.elementId !== null && params.elementId !== '') {
+            query += ' AND element_id = ?';
+            filters.push(params.elementId);
         }
 
-        query += ' ORDER BY c.name';
+        query += ' ORDER BY id';
 
         const stmt = this.db.prepare(query);
 
         return stmt.all(filters);
-
-    }
-
-    getCountByFilter(params, filter) {
-
-        const filters = Array();
-        let query = `
-            SELECT count(*) AS total FROM container
-            WHERE true 
-        `;
-
-        if(params.deleted !== null && params.deleted !== '') {
-            query += ' AND deleted = 0';
-        } else {
-            query += ' AND deleted = 1';
-        }
-
-        if(params.content !== null && params.content !== undefined && params.content !== '') {
-            query += ' AND name like ?';
-            filters.push(`%${params.content}%`);
-        }
-
-        const stmt = this.db.prepare(query);
-        const result = stmt.get(filters);
-        return result.total;        
-
-    }
-
-    getAllCounts(params) {
-
-        return {
-            total: this.getCountByFilter(params)
-        }
 
     }
 
@@ -95,14 +59,13 @@ class ContainerDB {
         try {
 
             const query = `
-                INSERT INTO container(name, dimensions, description, seller_id) 
-                VALUES(?, ?, ?, ?)
+                INSERT INTO annotation(element_name, element_id, content) 
+                VALUES(?, ?, ?)
             `;
             const values = Array();
-            values.push(params.name);
-            values.push(params.dimensions);
-            values.push(params.description);
-            values.push(params.seller);
+            values.push(params.elementName);
+            values.push(params.elementId);
+            values.push(params.content);
 
             const stmt = this.db.prepare(query);
             const info = stmt.run(values);
@@ -124,19 +87,17 @@ class ContainerDB {
         try {
 
             const query = `
-                UPDATE container
-                set name = ?
-                , dimensions = ?
-                , description = ?
-                , seller_id = ?
+                UPDATE annotation
+                set element_name = ?
+                , element_id = ?
+                , content = ?
                 , date_update = CURRENT_TIMESTAMP
                 WHERE id = ?
             `;
             const values = Array();
-            values.push(params.name);
-            values.push(params.dimensions);
-            values.push(params.description);
-            values.push(params.seller);
+            values.push(params.elementName);
+            values.push(params.elementId);
+            values.push(params.content);
             values.push(params.id);
 
             const stmt = this.db.prepare(query);
@@ -163,7 +124,7 @@ class ContainerDB {
 
                 if(element.deleted) {
 
-                    const query = `DELETE FROM container WHERE id = ?`;
+                    const query = `DELETE FROM annotation WHERE id = ?`;
                     const stmt = this.db.prepare(query);
                     stmt.run(id);
                     return {
@@ -173,7 +134,7 @@ class ContainerDB {
                 } else {
 
                     const query = `
-                        UPDATE container
+                        UPDATE image
                         set deleted = 1
                         , date_delete = CURRENT_TIMESTAMP
                         WHERE id = ?
@@ -201,4 +162,4 @@ class ContainerDB {
 }
 
 
-export default ContainerDB;
+export default AnnotationDB;

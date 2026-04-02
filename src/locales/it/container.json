@@ -1,0 +1,38 @@
+{
+
+  "container": {
+
+    "label": "Contenitore",
+    "name": "Nome",
+    "dimensions": "Dimensioni",
+    "description": "Descrizione",
+    
+    "list": {
+      "title": "Contenitori"
+    },
+
+    "page": {
+      "create": "Nuovo contenitore",
+      "edit": "Modifica contenitore"
+    },
+
+    "action": {
+      "add": "Aggiungi contenitore",
+      "save": "Salva contenitore",
+      "edit": "Modifica contenitore",
+      "delete": "Elimina contenitore",
+      "back": {
+        "container": "Torna a contenitore",
+        "containers": "Torna alla lista contenitori"
+      }
+    },
+
+    "search": {
+      "title": "Cerca contenitori",
+      "content": "Nome/descrizione contiene:",
+      "seller": "Venditore"
+    }
+
+  }
+
+}

@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import DetailsElement from '../elements/DetailsElement';
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
+import ImageList from '../lists/ImageList';
 
 const ContainerView = () => {
 
@@ -36,13 +37,13 @@ const ContainerView = () => {
         if (!element) return [];
 
         return [
-            { label: t('container.label'), value: element.name },
+            { label: t('container.name'), value: element.name },
             { label: t('container.dimensions'), value: element.dimensions },
             { label: t('seller.label'), value: element.sName },
         ];
     }, [element]);
 
-    async function loadElement() {
+    async function loadAll() {
 
         try {
 
@@ -64,7 +65,7 @@ const ContainerView = () => {
 
     useEffect( () => {
         if(id) {
-            loadElement();
+            loadAll();
             loadNotification();
         }
     }, [id]);
@@ -92,6 +93,9 @@ const ContainerView = () => {
 
     }
 
+
+
+
     return (
         <>
             {notification && (
@@ -107,7 +111,7 @@ const ContainerView = () => {
             )}
 
             <PageHeader 
-                title={element.name}
+                title={t('container.label')}
             >
                 <button 
                     className={`btn btn-outline-primary me-3`}
@@ -133,25 +137,34 @@ const ContainerView = () => {
             </PageHeader>            
 
             <div className='row'>
-                <div className='col-md-8'>
+                <div className='col-md-10'>
+
                     <DetailsElement data={details} />
+
+                    <div className='content-sublist'>
+                        <ImageList 
+                            elementName='container'
+                            elementId={id}
+                        />
+                    </div>
+
                 </div>
-                <div className='col-md-4'>
-                    <div className='content-right'>
-                        <small>
-                            <b>
-                                <AppIcons.Search/> {t('container.search.title')}
-                            </b>
-                        </small>
-                        <div className="row mt-2">
-                            <div className='col'>
-                                Coming soon...
-                            </div>
+                <div className='col-md-2 content-right'>
+
+                    <small>
+                        <b>
+                            {t('container.description')}
+                        </b>
+                    </small>
+                    <div className="row mt-2">
+                        <div className='col'>
+                            {element.description}
                         </div>
                     </div>
+
                 </div>
             </div>
-
+                
         </>
     );
 

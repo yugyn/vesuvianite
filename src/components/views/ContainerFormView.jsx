@@ -14,6 +14,7 @@ const ContainerFormView = () => {
     const [element, setElement] = useState({
         name: '', 
         dimensions: '', 
+        description: '', 
         seller_id: '', 
     });
     const [sellers, setSellers] = useState(null);
@@ -61,12 +62,14 @@ const ContainerFormView = () => {
 
         const name = document.getElementById('name').value.trim();
         const dimensions = document.getElementById('dimensions').value;
+        const description = document.getElementById('description').value;
         const seller = document.getElementById('seller').value;
 
         const params = {
             id: (id ? id : 0),
             name: name,
             dimensions: dimensions,
+            description: description,
             seller: (seller == '' ? null : seller),
         }
 
@@ -119,6 +122,26 @@ const ContainerFormView = () => {
 
                 <div className="mb-3 row">
                     <label className="col-sm-2 col-form-label">
+                        {t('seller.label')}
+                    </label>
+                    <div className="col-sm-4">
+                        <select 
+                            className="form-select"
+                            id="seller"
+                            defaultValue={element.seller_id}
+                        >
+                            <option value=''>- nessuno -</option>
+                            {sellers.map((item) => (
+                                <option 
+                                    key={item.id}
+                                    value={item.id}
+                                >{item.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>                
+                <div className="mb-3 row">
+                    <label className="col-sm-2 col-form-label">
                         {t('container.name')}
                     </label>
                     <div className="col-sm-4">
@@ -143,22 +166,14 @@ const ContainerFormView = () => {
                 </div>                
                 <div className="mb-3 row">
                     <label className="col-sm-2 col-form-label">
-                        {t('seller.label')}
+                        {t('container.description')}
                     </label>
                     <div className="col-sm-4">
-                        <select 
-                            className="form-select"
-                            id="seller"
-                            defaultValue={element.seller_id}
-                        >
-                            <option value=''>- nessuno -</option>
-                            {sellers.map((item) => (
-                                <option 
-                                    key={item.id}
-                                    value={item.id}
-                                >{item.name}</option>
-                            ))}
-                        </select>
+                        <textarea 
+                            className="form-control"
+                            id="description" 
+                            defaultValue={element.description}
+                        />
                     </div>
                 </div>                
 

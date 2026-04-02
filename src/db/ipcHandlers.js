@@ -4,6 +4,7 @@ import MineralClassDB from "./MineralClassDB";
 import CrystalSystemDB from "./CrystalSystemDB";
 import MineralDB from "./MineralDB";
 import ContainerDB from "./ContainerDB";
+import ImageDB from "./ImageDB";
 
 export default function ipcHandlers(db) {
 
@@ -12,6 +13,7 @@ export default function ipcHandlers(db) {
     const crystalSystemDB = new CrystalSystemDB(db.db);
     const mineralDB = new MineralDB(db.db);
     const containerDB = new ContainerDB(db.db);
+    const imageDB = new ImageDB(db.db);
 
     ipcMain.handle('tasks:add', (_, title) => {
         return taskDB.addTask(title);
@@ -60,7 +62,7 @@ export default function ipcHandlers(db) {
     });
 
 
-   ipcMain.handle('container:getAll', (_, params) => {
+    ipcMain.handle('container:getAll', (_, params) => {
         return containerDB.getAll(params);
     });
     ipcMain.handle('container:get', (_, id) => {
@@ -79,6 +81,26 @@ export default function ipcHandlers(db) {
         return containerDB.delete(id);
     });
 
+
+    ipcMain.handle('image:getAll', (_, params) => {
+        return imageDB.getAll(params);
+    });
+
+    ipcMain.handle('annotation:getAll', (_, params) => {
+        return annotationDB.getAll(params);
+    });
+    ipcMain.handle('annotation:get', (_, id) => {
+        return annotationDB.get(id);
+    });
+    ipcMain.handle('annotation:getAllByElement', (_, params) => {
+        return annotationDB.getAllByElement(_, params);
+    });
+    ipcMain.handle('annotation:save', (_, params) => {
+        return annotationDB.save(params);
+    });
+    ipcMain.handle('annotation:delete', (_, id) => {
+        return annotationDB.delete(id);
+    });
 
 
 }

@@ -147,3 +147,44 @@ div.page {
 .navbar-custom {
     background-color: #3D2017 !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Contenitore della modal per lo zoom */
+.zoom-container {
+  overflow: auto; /* Permette lo scroll se l'immagine supera la modale */
+  max-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa;
+}
+
+.img-zoomable {
+  transition: transform 0.3s ease;
+  cursor: zoom-in;
+  max-width: 100%;
+  height: auto;
+}
+
+.img-zoomable.zoomed {
+  transform: scale(2.5); /* Livello di zoom */
+  cursor: zoom-out;
+}
+
+
+
+

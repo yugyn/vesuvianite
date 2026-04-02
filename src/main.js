@@ -1,24 +1,34 @@
-import { app, ipcMain, BrowserWindow, Menu } from 'electron';
+import { app, ipcMain, BrowserWindow, dialog, protocol } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import AppDB from './db/AppDB';
 import ipcHandlers from './db/ipcHandlers';
+import ImageDB from './db/ImageDB';
+
+const PATH_IMAGE = path.join(app.getPath('userData'), 'image/');  
+
+const fs = require('fs');
 
 let db;
 let mainWindow;
 
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'safe-protocol', privileges: { standard: true, secure: true, supportFetchAPI: true } }
+]);
+
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
-  app.quit();
+	app.quit();
 }
 
 const createWindow = () => {
-//  Menu.setApplicationMenu(null);
-  // Create the browser window.
   mainWindow = new BrowserWindow({
     show: false,         // Evita il "lampo" bianco al caricamento      
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true, // Fondamentale
+        nodeIntegration: false, // Per sicurezza meglio false
     },
   });
 
@@ -43,7 +53,28 @@ app.whenReady().then(() => {
   db = new AppDB();
   ipcHandlers(db);
 
-  createWindow();
+	protocol.registerFileProtocol('safe-protocol', (request, callback) => {
+
+    	let fileName = request.url.replace('safe-protocol://', '');
+      fileName = decodeURIComponent(fileName);
+      fileName = fileName.replace(/\/$/, "").replace(/^\//, "");
+      let filePath = path.join(PATH_IMAGE, fileName);
+
+  		if (process.platform === 'win32') {
+
+			filePath = filePath.startsWith('/') ? filePath.substring(1) : filePath;
+			if (/^[a-zA-Z]\//.test(filePath)) {
+				filePath = filePath[0] + ':' + filePath.substring(1);
+			}
+		}
+
+	    const finalPath = path.normalize(filePath);
+
+	    callback({ path: finalPath });
+
+	});
+  
+  	createWindow();
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -142,4 +173,79 @@ function createWhatisWindow() {
 // Ascolta il messaggio "open-about-window" dal Renderer
 ipcMain.on('window:whatis', () => {
   createWhatisWindow();
+});
+
+
+
+
+ipcMain.handle('image:upload-multiple', async (event, params) => {
+
+	const { canceled, filePaths } = await dialog.showOpenDialog({
+    	properties: ['openFile', 'multiSelections'],
+    	filters: [{ name: 'Immagini', extensions: ['jpg', 'png', 'gif'] }]
+  	});
+
+  	if (canceled) return;
+
+    return filePaths;
+
+});
+
+ipcMain.handle('image:save-multiple', async (event, params) => {
+
+    const results = [];
+    const destPath = PATH_IMAGE + params.elementName;  
+console.log("destPath:::" + destPath);    
+
+  	fs.mkdirSync(path.dirname(destPath), { recursive: true });
+
+    for (const sourcePath of params.pathsSorgente) {
+console.log("sourcePath:::" + sourcePath);      
+        try {
+
+          const fileName = params.elementId + '_' + Date.now() + path.extname(sourcePath);
+          const destPathFile = destPath + '/' + fileName;
+console.log("fileName:::" + fileName);      
+console.log("destPathFile:::" + destPathFile);      
+
+          fs.copyFileSync(sourcePath, destPathFile);
+
+  	      const imageDB = new ImageDB(db.db);
+  	      const paramsDB = {elementName: params.elementName, elementId: params.elementId, filename: fileName};
+    	    imageDB.save(paramsDB);
+
+        } catch (err) {
+            console.error(`Errore caricamento file ${pathSorgente}:`, err);
+        }
+    }
+    return results;
+
+});
+
+
+ipcMain.handle('image:delete', async (event, { id, pathFile, deleted }) => {
+    
+	try {
+
+	  	const imageDB = new ImageDB(db.db);
+        await imageDB.delete(id);
+
+		if(deleted) {
+
+			if (fs.existsSync(pathFile)) {
+				fs.unlinkSync(pathFile);
+			} else {
+				console.warn("File non trovato sul disco, ma rimosso dal DB:", pathFile);
+				return { success: true, message: "File fisico non trovato" };
+			}
+
+		}
+
+		return { success: true };
+
+    } catch (error) {
+        console.error("Errore durante l'eliminazione:", error);
+        return { success: false, error: error.message };
+    }
+
 });

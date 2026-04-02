@@ -164,7 +164,7 @@ const ContainerList = ({ elementName, elementId, subList }) => {
                                             {t('container.label')}
                                         </th>
                                         <th scope='col'>
-                                            {t('dimensions.label')}
+                                            {t('container.dimensions')}
                                         </th>
                                         <th scope='col'>
                                             {t('seller.label')}
@@ -221,7 +221,7 @@ const ContainerList = ({ elementName, elementId, subList }) => {
                     <div className='content-right'>
                         <small>
                             <b>
-                                <AppIcons.Search/> {t('mineral.search.title')}
+                                <AppIcons.Search/> {t('container.search.title')}
                             </b>
                         </small>
                         <form onSubmit={handleSearch}>

@@ -1,9 +1,14 @@
-import { contextBridge, ipcRenderer } from 'electron';
+import { contextBridge, ipcRenderer, webUtils } from 'electron';
 
 const api = {
 
     openAbout: () => ipcRenderer.send('window:about'),
     openWhatis: () => ipcRenderer.send('window:whatis'),
+
+    getFilePath: (file) => webUtils.getPathForFile(file),
+    uploadImages: (params) => ipcRenderer.invoke('image:upload-multiple', params),
+    saveImages: (params) => ipcRenderer.invoke('image:save-multiple', params),
+    deleteImage: (params) => ipcRenderer.invoke('image:delete', params),
 
     addTask: (title) => ipcRenderer.invoke('tasks:add', title),
     deleteTask: (id) => ipcRenderer.invoke('tasks:delete', id),
@@ -28,6 +33,14 @@ const api = {
     getAllContainersByElement: (params) => ipcRenderer.invoke('container:getAllByElement', params),
     saveContainer: (params) => ipcRenderer.invoke('container:save', params),
     deleteContainer: (id) => ipcRenderer.invoke('container:delete', id),
+
+    getAllImages: (params) => ipcRenderer.invoke('image:getAll', params),
+
+    getAnnotation: (id) => ipcRenderer.invoke('annotation:get', id),
+    getAllAnnotations: (params) => ipcRenderer.invoke('annotation:getAll', params),
+    getAllAnnotationsByElement: (params) => ipcRenderer.invoke('annotation:getAllByElement', params),
+    saveAnnotation: (params) => ipcRenderer.invoke('annotation:save', params),
+    deleteAnnotation: (id) => ipcRenderer.invoke('annotation:delete', id),
 
 }
 

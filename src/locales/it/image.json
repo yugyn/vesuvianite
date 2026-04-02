@@ -1,0 +1,18 @@
+{
+
+  "image": {
+
+    "label": "Immagine",
+    "list": {
+      "title": "Galleria immagini"
+    },
+    "action": {
+      "add": "Aggiungi immagine",
+      "save": "Salva immagine",
+      "edit": "Modifica immagine",
+      "delete": "Elimina immagine"
+    }
+
+  }
+
+}
