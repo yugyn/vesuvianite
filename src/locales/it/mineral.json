@@ -3,9 +3,16 @@
   "mineral": {
 
     "label": "Minerale",
+    "name": "Nome",
     "formula": "Formula",
+    "typology": "Tipo",
+    "genesis": "Genesi",
     "list": {
       "title": "Minerali"
+    },
+    "page": {
+      "create": "Nuovo minerale",
+      "edit": "Modifica minerale"
     },
     "filter": {
       "alls": "Tutti:",
@@ -13,7 +20,14 @@
       "virtuals": "Virtuali:"
     },
     "action": {
-      "add": "Aggiungi minerale"
+      "add": "Aggiungi minerale",
+      "save": "Salva minerale",
+      "edit": "Modifica minerale",
+      "delete": "Elimina minerale",
+      "back": {
+        "mineral": "Torna a mnierale",
+        "minerals": "Torna alla lista mnierali"
+      }
     },
 
     "search": {

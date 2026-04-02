@@ -21,7 +21,7 @@ class MineralDB {
 
     }
 
-    getAll(params, asCount) {
+    getAll(params) {
 
         const filters = Array();
         let query = `

@@ -3,6 +3,7 @@ import TaskDatabase from "./taskDatabase";
 import MineralClassDB from "./MineralClassDB";
 import CrystalSystemDB from "./CrystalSystemDB";
 import MineralDB from "./MineralDB";
+import ContainerDB from "./ContainerDB";
 
 export default function ipcHandlers(db) {
 
@@ -10,6 +11,7 @@ export default function ipcHandlers(db) {
     const mineralClassDB = new MineralClassDB(db.db);
     const crystalSystemDB = new CrystalSystemDB(db.db);
     const mineralDB = new MineralDB(db.db);
+    const containerDB = new ContainerDB(db.db);
 
     ipcMain.handle('tasks:add', (_, title) => {
         return taskDB.addTask(title);
@@ -56,5 +58,27 @@ export default function ipcHandlers(db) {
     ipcMain.handle('mineral:delete', (_, id) => {
         return mineralDB.delete(id);
     });
+
+
+   ipcMain.handle('container:getAll', (_, params) => {
+        return containerDB.getAll(params);
+    });
+    ipcMain.handle('container:get', (_, id) => {
+        return containerDB.get(id);
+    });
+    ipcMain.handle('container:getAllByElement', (_, params) => {
+        return containerDB.getAllByElement(params.elementName, params.elementId, params.filter);
+    });
+    ipcMain.handle('container:getAllCounts', (_, params) => {
+        return containerDB.getAllCounts(params);
+    });
+    ipcMain.handle('container:save', (_, params) => {
+        return containerDB.save(params);
+    });
+    ipcMain.handle('container:delete', (_, id) => {
+        return containerDB.delete(id);
+    });
+
+
 
 }

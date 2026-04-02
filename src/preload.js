@@ -22,6 +22,13 @@ const api = {
     saveMineral: (params) => ipcRenderer.invoke('mineral:save', params),
     deleteMineral: (id) => ipcRenderer.invoke('mineral:delete', id),
 
+    getContainer: (id) => ipcRenderer.invoke('container:get', id),
+    getAllContainers: (params) => ipcRenderer.invoke('container:getAll', params),
+    getAllContainersCount: (params) => ipcRenderer.invoke('container:getAllCounts', params),
+    getAllContainersByElement: (params) => ipcRenderer.invoke('container:getAllByElement', params),
+    saveContainer: (params) => ipcRenderer.invoke('container:save', params),
+    deleteContainer: (id) => ipcRenderer.invoke('container:delete', id),
+
 }
 
 contextBridge.exposeInMainWorld('electronAPI', api);

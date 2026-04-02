@@ -1,9 +1,9 @@
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import MineralList from '../lists/MineralList'
+import ContainerList from '../lists/CointainerList';
 
-const MineralListView = () => {
+const ContainerListView = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -39,7 +39,7 @@ const MineralListView = () => {
                     {notification}
                 </div>
             )}
-            <MineralList />
+            <ContainerList />
 
         </>
     );
@@ -47,4 +47,4 @@ const MineralListView = () => {
 };
 
 
-export default MineralListView;
+export default ContainerListView;

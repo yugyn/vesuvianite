@@ -6,6 +6,9 @@ export const AppIcons = {
     ClearFields: (props) => <Icon.EraserFill {...props} />,
     Trash: (props) => <Icon.Trash {...props} />,
     Add: (props) => <Icon.PlusLg {...props} />,
+    Edit: (props) => <Icon.Pencil {...props} />,
+    Delete: (props) => <Icon.XCircle {...props} />,
+    Back: (props) => <Icon.ArrowLeftCircle {...props} />,
 
     View: {
         Table: (props) => <Icon.ListColumns {...props} />,

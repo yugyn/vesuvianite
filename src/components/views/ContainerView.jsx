@@ -7,7 +7,7 @@ import DetailsElement from '../elements/DetailsElement';
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
 
-const MineralView = () => {
+const ContainerView = () => {
 
     const { t } = useTranslation();
 
@@ -36,10 +36,9 @@ const MineralView = () => {
         if (!element) return [];
 
         return [
-            { label: t('mineral.label'), value: 'Coming soon...' },
-            { label: t('mineral.formula'), value: element.formula },
-            { label: t('crystalSystem.label'), value: element.csName },
-            { label: t('mineralClass.label'), value: element.mcName },
+            { label: t('container.label'), value: element.name },
+            { label: t('container.dimensions'), value: element.dimensions },
+            { label: t('seller.label'), value: element.sName },
         ];
     }, [element]);
 
@@ -47,7 +46,7 @@ const MineralView = () => {
 
         try {
 
-            const data = await window.electronAPI.getMineral(id);
+            const data = await window.electronAPI.getContainer(id);
             if(data) {
                 setElement(data);
             } else {
@@ -82,9 +81,9 @@ const MineralView = () => {
             return;
         }
 
-        const result = await window.electronAPI.deleteMineral(id);
+        const result = await window.electronAPI.deleteContainer(id);
         if(result.success) {
-            navigate(`/minerals`, {
+            navigate(`/containers`, {
                 state: {message: "Elemento eliminato con successo."} 
             });
         } else {
@@ -112,22 +111,22 @@ const MineralView = () => {
             >
                 <button 
                     className={`btn btn-outline-primary me-3`}
-                    onClick={() => navigate(`/minerals`)}
-                    title={t('mineral.action.back.minerals')}
+                    onClick={() => navigate(`/containers`)}
+                    title={t('container.action.back.containers')}
                 >
                     <AppIcons.Back />
                 </button>
                 <button 
                     className={`btn btn-outline-primary me-1`}
-                    onClick={() => navigate(`/mineralForm/${element.id}`)}
-                    title={t('mineral.action.edit')}
+                    onClick={() => navigate(`/containerForm/${element.id}`)}
+                    title={t('container.action.edit')}
                 >
                     <AppIcons.Edit />
                 </button>
                 <button 
                     className={`btn btn-outline-danger me-1`}
                     onClick={handleDelete}
-                    title={t('mineral.action.delete')}
+                    title={t('container.action.delete')}
                 >
                     <AppIcons.Delete />
                 </button>
@@ -141,7 +140,7 @@ const MineralView = () => {
                     <div className='content-right'>
                         <small>
                             <b>
-                                <AppIcons.Search/> {t('mineral.search.title')}
+                                <AppIcons.Search/> {t('container.search.title')}
                             </b>
                         </small>
                         <div className="row mt-2">
@@ -159,4 +158,4 @@ const MineralView = () => {
 };
 
 
-export default MineralView;
+export default ContainerView;

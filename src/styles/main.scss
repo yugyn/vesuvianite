@@ -132,9 +132,18 @@ div.page {
     padding-right:25px;
 }
 
-.content-search {
+.content-right {
     border: 1px solid #ddd;
     background-color: #ececec;
     border-radius: 5px;
-    padding: 15px;
+    padding: 5px 10px;
+}
+
+
+.bg-custom-dark {
+    background-color: #3D2017 !important;
+}
+
+.navbar-custom {
+    background-color: #3D2017 !important;
 }
