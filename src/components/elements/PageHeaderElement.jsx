@@ -5,7 +5,7 @@ const PageHeaderElement = ({ title, subTitle, children }) => {
     <div className="d-flex justify-content-between align-items-center mb-2">
       
       {subTitle ? (
-        <h3>{title}</h3>
+        <h5>{title}</h5>
       ) : (
         <h1>{title}</h1>
       )}

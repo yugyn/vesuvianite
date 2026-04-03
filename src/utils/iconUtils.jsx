@@ -9,10 +9,27 @@ export const AppIcons = {
     Edit: (props) => <Icon.Pencil {...props} />,
     Delete: (props) => <Icon.XCircle {...props} />,
     Back: (props) => <Icon.ArrowLeftCircle {...props} />,
+    Next: (props) => <Icon.CaretRightFill {...props} />,
+    Prev: (props) => <Icon.CaretLeftFill {...props} />,
 
     View: {
         Table: (props) => <Icon.ListColumns {...props} />,
         List: (props) => <Icon.List {...props} />,
+    },
+
+    Zoom: {
+        In: (props) => <Icon.ZoomIn {...props} />,
+        Out: (props) => <Icon.ZoomOut {...props} />,
+        Reset: (props) => <Icon.AspectRatio {...props} />,
+    },
+
+    Screen: {
+        Full: (props) => <Icon.ArrowsFullscreen {...props} />,
+        Resize: (props) => <Icon.ArrowsAngleContract {...props} />,
+    },
+
+    Open: {
+        External: (props) => <Icon.BoxArrowUp {...props} />,
     },
 
     Mineral: {
@@ -25,4 +42,5 @@ export const AppIcons = {
         },
 
     },
+
 };

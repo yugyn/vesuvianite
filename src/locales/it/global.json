@@ -1,5 +1,11 @@
 {
 
+  "action": {
+      "save": "Salva",
+      "delete": "Elimina",
+      "cancel": "Annulla"
+  },
+
   "view": {
     "table": "Tabella",
     "list": "Lista",

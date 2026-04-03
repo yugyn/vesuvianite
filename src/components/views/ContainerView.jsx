@@ -7,6 +7,8 @@ import DetailsElement from '../elements/DetailsElement';
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
 import ImageList from '../lists/ImageList';
+import DescriptionElement from '../elements/DescriptionElement';
+import AnnotationsElement from '../elements/AnnotationsElement';
 
 const ContainerView = () => {
 
@@ -94,6 +96,7 @@ const ContainerView = () => {
     }
 
 
+    const elemento = {};
 
 
     return (
@@ -136,6 +139,8 @@ const ContainerView = () => {
                 </button>
             </PageHeader>            
 
+            <hr/>
+
             <div className='row'>
                 <div className='col-md-10'>
 
@@ -149,17 +154,21 @@ const ContainerView = () => {
                     </div>
 
                 </div>
-                <div className='col-md-2 content-right'>
+                <div className='col-md-2'>
 
-                    <small>
-                        <b>
-                            {t('container.description')}
-                        </b>
-                    </small>
-                    <div className="row mt-2">
-                        <div className='col'>
-                            {element.description}
-                        </div>
+                    <div className='content-right'>
+
+                        <DescriptionElement
+                            element={element}
+                        />
+
+                        <hr/>
+
+                        <AnnotationsElement
+                            elementName='container'
+                            elementId={element.id}
+                        />
+
                     </div>
 
                 </div>

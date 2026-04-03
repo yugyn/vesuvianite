@@ -9,6 +9,8 @@ const api = {
     uploadImages: (params) => ipcRenderer.invoke('image:upload-multiple', params),
     saveImages: (params) => ipcRenderer.invoke('image:save-multiple', params),
     deleteImage: (params) => ipcRenderer.invoke('image:delete', params),
+    getPathImage: (fileName) => ipcRenderer.invoke('path:image', fileName),
+    openFile: (fullPath) => ipcRenderer.invoke('file:open', fullPath),
 
     addTask: (title) => ipcRenderer.invoke('tasks:add', title),
     deleteTask: (id) => ipcRenderer.invoke('tasks:delete', id),

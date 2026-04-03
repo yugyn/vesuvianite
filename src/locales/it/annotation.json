@@ -1,0 +1,15 @@
+{
+
+  "annotation.label": "Annotazione",
+
+  "annotation.priority.low": "Priorità bassa",
+  "annotation.priority.high": "Priorità alta",
+
+  "annotation.list.title": "Annotazioni",
+
+  "annotation.action.add": "Aggiungi annotazione",
+  "annotation.action.save": "Salva annotazione",
+  "annotation.action.edit": "Modifica annotazione",
+  "annotation.action.delete": "Elimina annotazione"
+
+}

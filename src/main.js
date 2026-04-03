@@ -1,4 +1,4 @@
-import { app, ipcMain, BrowserWindow, dialog, protocol } from 'electron';
+import { app, ipcMain, BrowserWindow, dialog, protocol, shell } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import AppDB from './db/AppDB';
@@ -6,6 +6,26 @@ import ipcHandlers from './db/ipcHandlers';
 import ImageDB from './db/ImageDB';
 
 const PATH_IMAGE = path.join(app.getPath('userData'), 'image/');  
+
+ipcMain.handle('path:image', (event, fileName) => {
+
+      let filePath = path.join(PATH_IMAGE, fileName);
+
+  		if (process.platform === 'win32') {
+
+        filePath = filePath.startsWith('/') ? filePath.substring(1) : filePath;
+        if (/^[a-zA-Z]\//.test(filePath)) {
+          filePath = filePath[0] + ':' + filePath.substring(1);
+        }
+      }
+
+      return filePath;
+});
+
+// Gestisci l'apertura del file
+ipcMain.handle('file:open', async (event, fullPath) => {
+    await shell.openPath(fullPath);
+});
 
 const fs = require('fs');
 

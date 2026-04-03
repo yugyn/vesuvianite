@@ -134,7 +134,7 @@ div.page {
 
 .content-right {
     border: 1px solid #ddd;
-    background-color: #ececec;
+    background-color: #f5f5f5;
     border-radius: 5px;
     padding: 5px 10px;
 }
@@ -163,28 +163,68 @@ div.page {
 
 
 
-/* Contenitore della modal per lo zoom */
 .zoom-container {
-  overflow: auto; /* Permette lo scroll se l'immagine supera la modale */
-  max-height: 80vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f8f9fa;
+    height: 70vh;
+    overflow: auto; /* Mostra scrollbar se zoomLevel > 1 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a;
 }
 
-.img-zoomable {
-  transition: transform 0.3s ease;
-  cursor: zoom-in;
-  max-width: 100%;
-  height: auto;
+/* Rendi le scrollbar sottili per non disturbare */
+.zoom-container::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+.zoom-container::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 10px;
 }
 
-.img-zoomable.zoomed {
-  transform: scale(2.5); /* Livello di zoom */
-  cursor: zoom-out;
+.note-0 {
+    background-color: #fff9c4;
+    border-left: 5px solid #fbc02d;
+    color: #333;
 }
 
+.note-1 {
+    background-color: #ffebee;
+    border-left: 5px solid #e53935;
+    color: #333;
+}
 
+.note {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 0.875rem;
+    line-height: 1.4;    
+}
 
+.note-0:hover {
+    background-color: #ffe8a1;
+    border-color: #ffdf7e;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+.note-1:hover {
+    background-color: #f1b0b7;
+    border-color: #ee969f;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
 
+.btn-xs {
+    --bs-btn-padding-y: .07rem; 
+    --bs-btn-padding-x: .3rem; 
+    --bs-btn-font-size: .75rem;
+}
+
+.pointer {
+  cursor: pointer !important;
+}
+
+.pointer:hover {
+  filter: brightness(90%);
+  transition: filter 0.2s;
+}

@@ -1,23 +1,54 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
 import ImageElement from '../elements/ImageElement';
+import NoImageFallback from '../../images/1.jpg';
 
 const ImageList = ({ elementName, elementId }) => {
 
     const { t } = useTranslation();
 
-    const navigate = useNavigate();
-    
     const [isDragging, setIsDragging] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(-1);
-    const [isZoomed, setIsZoomed] = useState(false);
-
+  
     const [elements, setElements] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
+    const toggleFullscreen = () => {
+        setIsFullscreen(!isFullscreen);
+    };    
+
+    const [zoomLevel, setZoomLevel] = useState(1);
+    const MAX_ZOOM = 4;
+    const MIN_ZOOM = 0.5;
+    const STEP_ZOOM = 0.05;
+
+    const handleZoomIn = () => {
+        setZoomLevel(prev => Math.min(prev + STEP_ZOOM, MAX_ZOOM));
+    };
+
+    const handleZoomOut = () => {
+        setZoomLevel(prev => Math.max(prev - STEP_ZOOM, MIN_ZOOM));
+    };    
+
+    const resetZoom = () => {
+        setZoomLevel(1);
+    };
+
+    const openExternal = async () => {
+        const absolutePath = await window.electronAPI.getPathImage(`${elementName}/${currentImg.filename}`);
+        window.electronAPI.openFile(absolutePath);
+    };    
+
+    const getFinalUrl = (path) => {
+        if (!path) return NoImageFallback;
+        const cleanPath = path.replace(/\\/g, '/');
+        return `${cleanPath}`;
+    };
 
     const handleUpload = async () => {
 
@@ -30,18 +61,19 @@ const ImageList = ({ elementName, elementId }) => {
             pathsSorgente: paths
         });
 
+        setCurrentIndex(-1);
         loadAll();
 
     };
 
-    const handleDelete = async (id, pathFile, deleted) => {
+    const handleDelete = async () => {
 
         const confirm = window.confirm("Sei sicuro di voler eliminare questa immagine?");
         if (!confirm) return;
 
-        const result = await window.electronAPI.deleteImage({ id, pathFile, deleted });
+        const result = await window.electronAPI.deleteImage({ id: currentImg.id, pathFile: currentImg.filename, deleted: currentImg.deleted });
         if(result.success) {
-            setElements(prev => prev.filter(item => item.id !== id));
+            setElements(prev => prev.filter(item => item.id !== currentImg.id));
         } else {
             alert("Errore durante l'eliminazione: " + result.error);
         }
@@ -75,6 +107,7 @@ const ImageList = ({ elementName, elementId }) => {
                 pathsSorgente: validPaths
             });
 
+            setCurrentIndex(-1);
             loadAll();
         }
 
@@ -82,13 +115,11 @@ const ImageList = ({ elementName, elementId }) => {
 
     const goNext = (e) => {
         e?.stopPropagation();
-        setIsZoomed(false);
         setCurrentIndex((prev) => (prev + 1) % elements.length);
     };
 
     const goPrev = (e) => {
         e?.stopPropagation();
-        setIsZoomed(false);
         setCurrentIndex((prev) => (prev - 1 + elements.length) % elements.length);
     };    
 
@@ -118,7 +149,6 @@ const ImageList = ({ elementName, elementId }) => {
     useEffect( () => {
 
         loadAll();
-        setIsZoomed(false);
 
         const handleKeyDown = (e) => {
             if (currentIndex === -1) return;
@@ -167,7 +197,7 @@ const ImageList = ({ elementName, elementId }) => {
                             <div className="card h-100 shadow-sm">
                                 <div 
                                     key={item.id}
-                                    className="ratio ratio-1x1 pointer"
+                                    className="ratio ratio-4x3 pointer"
                                     onClick={() => setCurrentIndex(index)}
                                 >
                                     <ImageElement 
@@ -175,18 +205,6 @@ const ImageList = ({ elementName, elementId }) => {
                                         className="card-img-top rounded"
                                         style={{ objectFit: 'cover' }}
                                     />
-                                </div>
-
-                                <div className="card-body p-2 d-flex justify-content-between align-items-center">
-                                    <button 
-                                        className="btn btn-outline-danger btn-sm"
-                                        onClick={() => handleDelete(item.id, item.filename, item.deleted)}
-                                    >
-                                        <AppIcons.Delete
-                                            className="bi bi-x-lg"
-                                            title={t('image.action.delete')}
-                                        />
-                                    </button>                                
                                 </div>
                             </div>
                         </div>
@@ -199,44 +217,170 @@ const ImageList = ({ elementName, elementId }) => {
         
                     <div 
                         className="modal fade show d-block" 
-                        style={{ backgroundColor: 'rgba(0,0,0,0.8)' }} 
+                        style={{ backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1050 }} 
                         tabIndex="-1"
                     >
+                        
+                        <div className={`modal-dialog modal-dialog-centered ${isFullscreen ? 'modal-fullscreen' : 'modal-xl'}`}>
 
-                        <div className="modal-dialog modal-dialog-centered modal-xl">
-                            <div className="modal-content">
+                            <div 
+                                className="modal-content bg-dark text-white border-0"
+                            >
+                                
+                                <div 
+                                    className="modal-header border-0 d-flex align-items-center justify-content-between"
+                                    onDoubleClick={toggleFullscreen}
+                                >
+    
+                                    <div className="d-flex align-items-center gap-2">
+                                        <h5 className="modal-title">
+                                            {t('image.viewer.title')}
+                                        </h5>
+                                    </div>
 
-                                <div className="modal-header border-0">
-                                    <h5 className="modal-title">Visualizzatore Immagine</h5>
-                                    <button type="button" className="btn-close" onClick={() => setCurrentIndex(-1)}></button>
+                                    <div className="d-flex align-items-center gap-1">
+            
+                                        <button 
+                                            className="btn btn-outline-light btn-sm" 
+                                            onClick={toggleFullscreen}
+                                            title={isFullscreen ? t('image.action.resizeScreen') : t('image.action.fullScreen')}
+                                        >
+                                            {isFullscreen ? (
+                                                <AppIcons.Screen.Resize />
+                                            ) : (
+                                                <AppIcons.Screen.Full />
+                                            )}
+                                        </button>
+
+                                        <button 
+                                            type="button" 
+                                            className="btn-close btn-close-white" 
+                                            onClick={() => { setCurrentIndex(-1); }}
+                                        ></button>
+                                    </div>
                                 </div>
-              
-                                <div className="modal-body p-0 zoom-container">
-                                    <ImageElement 
-                                        filePath={`${elementName}/${currentImg.filename}`} 
-                                        className={`img-zoomable ${isZoomed ? 'zoomed' : ''}`}
-                                        onClick={() => setIsZoomed(!isZoomed)}
-                                    />
-                                </div>
 
-                                <div className="modal-footer border-0 justify-content-center">
-                                    {currentIndex + 1} / {elements.length}
-          {/* Freccia Sinistra */}
-          <button 
-            className="btn btn-link text-white position-absolute start-0 top-50 translate-middle-y m-3"
-            style={{ zIndex: 1100, fontSize: '2rem' }}
-            onClick={goPrev}
-          >
-            SX <i className="bi bi-chevron-left"></i>
-          </button>                        
-{/* Freccia Destra */}
-          <button 
-            className="btn btn-link text-white position-absolute end-0 top-50 translate-middle-y m-3"
-            style={{ zIndex: 1100, fontSize: '2rem' }}
-            onClick={goNext}
-          >
-            DX<i className="bi bi-chevron-right"></i>
-          </button>                        
+                                <div className="modal-body p-0 zoom-container d-flex align-items-center justify-content-center" style={{ overflow: 'auto', height: '70vh' }}>
+    
+                                    <div style={{ 
+                                        width: '100%', 
+                                        height: '100%', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center',
+                                        overflow: 'visible' // Permette all'immagine di uscire quando si zooma
+                                    }}>
+                                        <ImageElement 
+                                            filePath={`${elementName}/${currentImg.filename}`} 
+                                            style={{ 
+                                                maxWidth: '100%',
+                                                maxHeight: '100%',
+                                                objectFit: 'contain',
+                                                transform: `scale(${zoomLevel})`,
+                                                transformOrigin: 'center center',
+                                                transition: 'transform 0.05s linear'
+                                            }}
+                                            className="img-zoomable"
+                                            onDoubleClick={openExternal}
+                                        />
+                                    </div>
+                                </div>
+                                <div 
+                                    className="modal-footer border-0 bg-dark text-white d-flex justify-content-between align-items-center py-3 px-4"
+                                    style={{backgroundColor: '#000'}}
+                                >
+    
+                                    <div style={{ flex: 1 }} className="d-flex justify-content-start">
+
+                                        <button 
+                                            className="btn btn-outline-danger btn-sm d-flex align-items-center gap-2" 
+                                            onClick={handleDelete}
+                                            title={t('image.action.delete')}
+                                        >
+                                            <AppIcons.Delete />
+                                        </button>
+
+                                        <button 
+                                            className="btn btn-outline-light btn-sm ms-5" 
+                                            onClick={openExternal}
+                                            title={t('image.action.openExternal')}
+                                        >
+                                            <AppIcons.Open.External />
+                                        </button>
+                                                
+
+                                    </div>
+
+                                    <div style={{ flex: 2 }} className="d-flex align-items-center justify-content-center">
+                                        <div className="d-flex align-items-center gap-3 px-3 py-2 bg-white bg-opacity-10 rounded-pill">
+
+                                            <button 
+                                                className="btn btn-outline-light btn-sm" 
+                                                onClick={handleZoomOut}
+                                                disabled={zoomLevel <= MIN_ZOOM}
+                                                title={t('image.zoom.out')}
+                                            >
+                                                <AppIcons.Zoom.Out />
+                                            </button>
+
+                                            <input 
+                                                type="range" 
+                                                className="form-range custom-zoom-slider" 
+                                                min={MIN_ZOOM} 
+                                                max={MAX_ZOOM}
+                                                step={STEP_ZOOM}
+                                                value={zoomLevel} 
+                                                onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
+                                                style={{ width: '120px' }}
+                                            />
+
+                                            <button 
+                                                className="btn btn-outline-light btn-sm" 
+                                                onClick={handleZoomIn}
+                                                disabled={zoomLevel >= MAX_ZOOM}
+                                                title={t('image.zoom.in')}
+                                            >
+                                                <AppIcons.Zoom.In/>
+                                            </button>
+                                            <button 
+                                                className="btn btn-outline-light btn-sm" 
+                                                onClick={resetZoom}
+                                                title={t('image.zoom.reset')}
+                                            >
+                                                <AppIcons.Zoom.Reset/>
+                                            </button>
+                                            
+                                            <span className="text-white" style={{ minWidth: '45px', fontSize: '0.75rem' }}>
+                                                {Math.round(zoomLevel * 100)}%
+                                            </span>
+
+                                        </div>
+                                    </div>
+
+                                    <div style={{ flex: 1 }} className="d-flex justify-content-end align-items-center gap-3">
+
+                                        <span className="badge rounded-pill bg-secondary px-3 py-2">
+                                            {currentIndex + 1} / {elements.length}
+                                        </span>
+
+                                        <div className="btn-group border border-secondary rounded">
+                                            <button 
+                                                className="btn btn-outline-light btn-sm px-3" 
+                                                onClick={goPrev}
+                                                title={t('image.action.prev')}
+                                            >
+                                                <AppIcons.Prev />
+                                            </button>
+                                            <button 
+                                                className="btn btn-outline-light btn-sm px-3" 
+                                                onClick={goNext}
+                                                title={t('image.action.next')}
+                                            >
+                                                <AppIcons.Next />
+                                            </button>
+                                        </div>
+
+                                    </div>
 
                                 </div>
 
@@ -244,7 +388,8 @@ const ImageList = ({ elementName, elementId }) => {
 
                         </div>
 
-                    </div>
+                    </div>                
+                
                 )}                
 
             </div>

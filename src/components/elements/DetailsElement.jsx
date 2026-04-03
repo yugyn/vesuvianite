@@ -3,14 +3,17 @@ const DetailsElement = ({ data }) => {
   return (
 
     <>
-        <table className="table table-bordered table-hover datatable-table" id="sortTable">
+        <table className="table table-borderless align-middle mb-0">
             <tbody>
                 {data.map((item, index) => (
                     <tr key={index}>
-                        <td className="table-light col-md-3">
+                        <td className="text-muted fw-bold col-md-3">
                             {item.label}
                         </td>
-                        <td dangerouslySetInnerHTML={{__html: item.value}} />
+                        <td 
+                            className="fw-semibold text-dark"
+                            dangerouslySetInnerHTML={{__html: item.value}} 
+                        />
                     </tr>
                 ))}
             </tbody>

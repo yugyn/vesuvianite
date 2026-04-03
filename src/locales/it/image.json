@@ -6,11 +6,25 @@
     "list": {
       "title": "Galleria immagini"
     },
+    "viewer": {
+      "title": "Visualizzatore immagini"
+    },
     "action": {
       "add": "Aggiungi immagine",
       "save": "Salva immagine",
       "edit": "Modifica immagine",
-      "delete": "Elimina immagine"
+      "delete": "Elimina immagine",
+      "prev": "Immagine precedente",
+      "next": "Immagine successiva",
+      "fullScreen": "A tutto schermo",
+      "resizeScreen": "Esci da tutto schermo",
+      "openExternal": "Apri con l'app di sistema"
+    },
+
+    "zoom": {
+      "in": "Zoom avanti",
+      "out": "Zoom indietro",
+      "reset": "Zoom 100%"
     }
 
   }

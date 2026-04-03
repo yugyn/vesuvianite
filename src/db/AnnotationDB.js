@@ -1,6 +1,8 @@
 
 class AnnotationDB {
 
+    static TB_NAME = 'annotation';
+
     constructor(db) {
         this.db = db
     }
@@ -8,7 +10,7 @@ class AnnotationDB {
     get(id) {
 
         const query = `
-            SELECT * FROM annotation 
+            SELECT * FROM ${this.constructor.TB_NAME} 
             WHERE id = ?
         `;
 
@@ -22,7 +24,7 @@ class AnnotationDB {
 
         const filters = Array();
         let query = `
-            SELECT * FROM annotation 
+            SELECT * FROM ${this.constructor.TB_NAME} 
             WHERE deleted = 0  
         `;
 
@@ -36,7 +38,7 @@ class AnnotationDB {
             filters.push(params.elementId);
         }
 
-        query += ' ORDER BY id';
+        query += ' ORDER BY priority desc, date desc, id';
 
         const stmt = this.db.prepare(query);
 
@@ -59,13 +61,14 @@ class AnnotationDB {
         try {
 
             const query = `
-                INSERT INTO annotation(element_name, element_id, content) 
-                VALUES(?, ?, ?)
+                INSERT INTO ${this.constructor.TB_NAME}(element_name, element_id, content, priority) 
+                VALUES(?, ?, ?, ?)
             `;
             const values = Array();
             values.push(params.elementName);
             values.push(params.elementId);
             values.push(params.content);
+            values.push(params.priority);
 
             const stmt = this.db.prepare(query);
             const info = stmt.run(values);
@@ -87,17 +90,20 @@ class AnnotationDB {
         try {
 
             const query = `
-                UPDATE annotation
+                UPDATE ${this.constructor.TB_NAME}
                 set element_name = ?
                 , element_id = ?
                 , content = ?
+                , priority = ?
                 , date_update = CURRENT_TIMESTAMP
+                , date = CURRENT_TIMESTAMP
                 WHERE id = ?
             `;
             const values = Array();
             values.push(params.elementName);
             values.push(params.elementId);
             values.push(params.content);
+            values.push(params.priority);
             values.push(params.id);
 
             const stmt = this.db.prepare(query);
@@ -116,6 +122,7 @@ class AnnotationDB {
     }
 
     delete(id) {
+        console.log("qui...");
 
         try {
 
@@ -124,7 +131,7 @@ class AnnotationDB {
 
                 if(element.deleted) {
 
-                    const query = `DELETE FROM annotation WHERE id = ?`;
+                    const query = `DELETE FROM ${this.constructor.TB_NAME} WHERE id = ?`;
                     const stmt = this.db.prepare(query);
                     stmt.run(id);
                     return {
@@ -134,7 +141,7 @@ class AnnotationDB {
                 } else {
 
                     const query = `
-                        UPDATE image
+                        UPDATE ${this.constructor.TB_NAME}
                         set deleted = 1
                         , date_delete = CURRENT_TIMESTAMP
                         WHERE id = ?

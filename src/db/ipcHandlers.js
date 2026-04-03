@@ -5,6 +5,7 @@ import CrystalSystemDB from "./CrystalSystemDB";
 import MineralDB from "./MineralDB";
 import ContainerDB from "./ContainerDB";
 import ImageDB from "./ImageDB";
+import AnnotationDB from "./AnnotationDB";
 
 export default function ipcHandlers(db) {
 
@@ -14,6 +15,7 @@ export default function ipcHandlers(db) {
     const mineralDB = new MineralDB(db.db);
     const containerDB = new ContainerDB(db.db);
     const imageDB = new ImageDB(db.db);
+    const annotationDB = new AnnotationDB(db.db);
 
     ipcMain.handle('tasks:add', (_, title) => {
         return taskDB.addTask(title);
