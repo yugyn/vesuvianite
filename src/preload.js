@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer, webUtils } from 'electron';
+import { contextBridge, ipcRenderer, webUtils} from 'electron';
 
 const api = {
 
@@ -10,7 +10,12 @@ const api = {
     saveImages: (params) => ipcRenderer.invoke('image:save-multiple', params),
     deleteImage: (params) => ipcRenderer.invoke('image:delete', params),
     getPathImage: (fileName) => ipcRenderer.invoke('path:image', fileName),
+    updateImageOrder: (orderedIds) => ipcRenderer.invoke('image:update-orders', orderedIds),
+
     openFile: (fullPath) => ipcRenderer.invoke('file:open', fullPath),
+    downloadFile: (params) => ipcRenderer.invoke('file:download', params),
+
+    openLink: (url) => ipcRenderer.send('link:open', url),
 
     addTask: (title) => ipcRenderer.invoke('tasks:add', title),
     deleteTask: (id) => ipcRenderer.invoke('tasks:delete', id),
@@ -28,6 +33,11 @@ const api = {
     getAllMineralsByElement: (params) => ipcRenderer.invoke('mineral:getAllByElement', params),
     saveMineral: (params) => ipcRenderer.invoke('mineral:save', params),
     deleteMineral: (id) => ipcRenderer.invoke('mineral:delete', id),
+
+    getSeller: (id) => ipcRenderer.invoke('seller:get', id),
+    getAllSellers: (params) => ipcRenderer.invoke('seller:getAll', params),
+    saveSeller: (params) => ipcRenderer.invoke('seller:save', params),
+    deleteSeller: (id) => ipcRenderer.invoke('seller:delete', id),
 
     getContainer: (id) => ipcRenderer.invoke('container:get', id),
     getAllContainers: (params) => ipcRenderer.invoke('container:getAll', params),

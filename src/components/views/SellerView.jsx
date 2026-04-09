@@ -9,8 +9,10 @@ import PageHeader from '../elements/PageHeaderElement';
 import ImageList from '../lists/ImageList';
 import ShortDescriptionElement from '../elements/ShortDescriptionElement';
 import AnnotationsElement from '../elements/AnnotationsElement';
+import ContainerList from '../lists/ContainerList';
+import { fullAddress } from '../../utils/sellerUtils';
 
-const ContainerView = () => {
+const SellerView = () => {
 
     const { t } = useTranslation();
 
@@ -39,25 +41,18 @@ const ContainerView = () => {
         if (!element) return [];
 
         return [
-            { label: t('container.name'), value: element.name },
-            { label: t('container.dimensions'), value: element.dimensions },
-            { label: t('seller.label'), value: (
-                <span 
-                    className="element-link"
-                    onClick={(e) => {
-                        navigate(`/seller/${element.sId}`);
-                    }}
-                >{element.sName}</span>
-            )},
+            { label: t('seller.website'), value: element.website, type: 'website' },
+            { label: t('seller.email'), value: element.email, type: 'email' },
+            { label: t('seller.phoneNumber'), value: element.phone_number },
+            { label: t('seller.fullAddress'), value: fullAddress(element) },
         ];
-
     }, [element]);
 
     async function loadAll() {
 
         try {
 
-            const data = await window.electronAPI.getContainer(id);
+            const data = await window.electronAPI.getSeller(id);
             if(data) {
                 setElement(data);
             } else {
@@ -92,9 +87,9 @@ const ContainerView = () => {
             return;
         }
 
-        const result = await window.electronAPI.deleteContainer(id);
+        const result = await window.electronAPI.deleteSeller(id);
         if(result.success) {
-            navigate(`/containers`, {
+            navigate(`/sellers`, {
                 state: {message: "Elemento eliminato con successo."} 
             });
         } else {
@@ -102,10 +97,6 @@ const ContainerView = () => {
         }
 
     }
-
-
-    const elemento = {};
-
 
     return (
         <>
@@ -122,26 +113,27 @@ const ContainerView = () => {
             )}
 
             <PageHeader 
-                title={t('container.label')}
+                title={t('seller.label')}
+                name={element.name}
             >
                 <button 
                     className={`btn btn-outline-primary me-3`}
-                    onClick={() => navigate(`/containers`)}
-                    title={t('container.action.back.containers')}
+                    onClick={() => navigate(`/sellers`)}
+                    title={t('seller.action.back.sellers')}
                 >
                     <AppIcons.Back />
                 </button>
                 <button 
                     className={`btn btn-outline-primary me-1`}
-                    onClick={() => navigate(`/containerForm/${element.id}`)}
-                    title={t('container.action.edit')}
+                    onClick={() => navigate(`/sellerForm/${element.id}`)}
+                    title={t('seller.action.edit')}
                 >
                     <AppIcons.Edit />
                 </button>
                 <button 
                     className={`btn btn-outline-danger me-1`}
                     onClick={handleDelete}
-                    title={t('container.action.delete')}
+                    title={t('seller.action.delete')}
                 >
                     <AppIcons.Delete />
                 </button>
@@ -155,16 +147,28 @@ const ContainerView = () => {
                     <DetailsElement data={details} />
 
                     <div className='content-sublist'>
-                        <ImageList 
-                            elementName='container'
+                        <ContainerList
+                            elementName='seller'
                             elementId={id}
+                            subList={true}
                         />
                     </div>
+                    
+                    <p className='mt-5'>
+                        {element.description}
+                    </p>
 
                 </div>
                 <div className='col-md-2'>
 
                     <div className='content-right'>
+
+                        <AnnotationsElement
+                            elementName='seller'
+                            elementId={element.id}
+                        />
+
+                        <hr/>
 
                         <ShortDescriptionElement
                             element={element}
@@ -172,14 +176,16 @@ const ContainerView = () => {
 
                         <hr/>
 
-                        <AnnotationsElement
-                            elementName='container'
-                            elementId={element.id}
+                        <ImageList 
+                            elementName='seller'
+                            elementId={id}
+                            small={true}
                         />
 
                     </div>
 
                 </div>
+
             </div>
                 
         </>
@@ -188,4 +194,4 @@ const ContainerView = () => {
 };
 
 
-export default ContainerView;
+export default SellerView;

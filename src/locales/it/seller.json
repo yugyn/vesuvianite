@@ -1,0 +1,44 @@
+{
+
+  "seller": {
+
+    "label": "Venditore",
+    "name": "Nome",
+    "website": "Pagina web",
+    "email": "Email",
+    "phoneNumber": "Telefono",
+    "address": "Indirizzo",
+    "city": "Città",
+    "postalCode": "CAP",
+    "state": "Provincia",
+    "country": "Paese",
+    "fullAddress": "Indirizzo completo",
+    
+    "list": {
+      "title": "Venditori"
+    },
+
+    "page": {
+      "create": "Nuovo venditore",
+      "edit": "Modifica venditore"
+    },
+
+    "action": {
+      "add": "Aggiungi venditore",
+      "save": "Salva venditore",
+      "edit": "Modifica venditore",
+      "delete": "Elimina venditore",
+      "back": {
+        "container": "Torna a venditore",
+        "containers": "Torna alla lista venditori"
+      }
+    },
+
+    "search": {
+      "title": "Cerca venditori",
+      "content": "Nome/descrizione contiene:"
+    }
+
+  }
+
+}

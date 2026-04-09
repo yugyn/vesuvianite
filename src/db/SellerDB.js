@@ -1,8 +1,7 @@
-import SellerDB from "./SellerDB";
 
-class ContainerDB {
+class SellerDB {
 
-    static TB_NAME = 'container';
+    static TB_NAME = 'seller';
 
     constructor(db) {
         this.db = db
@@ -11,9 +10,8 @@ class ContainerDB {
     get(id) {
 
         const query = `
-            SELECT c.*, s.id as sId, s.name as sName FROM ${this.constructor.TB_NAME} AS c 
-            LEFT JOIN ${SellerDB.TB_NAME} AS s ON c.seller_id = s.id 
-            WHERE c.id = ?
+            SELECT * FROM ${this.constructor.TB_NAME} 
+            WHERE id = ?
         `;
 
         const stmt = this.db.prepare(query);
@@ -26,52 +24,29 @@ class ContainerDB {
 
         const filters = Array();
         let query = `
-            SELECT c.*, s.id as sId, s.name as sName FROM ${this.constructor.TB_NAME} AS c 
-            LEFT JOIN ${SellerDB.TB_NAME} AS s ON c.seller_id = s.id 
-            WHERE true 
+            SELECT * FROM ${this.constructor.TB_NAME} 
+            WHERE deleted = 0 
         `;
 
-        if(params.deleted !== null && params.deleted !== '') {
-            query += ' AND c.deleted = 0';
-        } else {
-            query += ' AND c.deleted = 1';
+        if(params) {
+
+            if(params.content !== null && params.content !== undefined && params.content !== '') {
+                query += ' AND name like ?';
+                filters.push(`%${params.content}%`);
+            }
+
+            if(params.description !== null && params.description !== undefined && params.description !== '') {
+                query += ' AND description like ?';
+                filters.push(`%${params.description}%`);
+            }
+
         }
 
-        if(params.content !== null && params.content !== undefined && params.content !== '') {
-            query += ' AND c.name like ?';
-            filters.push(`%${params.content}%`);
-        }
-
-        query += ' ORDER BY c.name';
+        query += ' ORDER BY name';
 
         const stmt = this.db.prepare(query);
 
         return stmt.all(filters);
-
-    }
-
-    getCountByFilter(params, filter) {
-
-        const filters = Array();
-        let query = `
-            SELECT count(*) AS total FROM ${this.constructor.TB_NAME}
-            WHERE true 
-        `;
-
-        if(params.deleted !== null && params.deleted !== '') {
-            query += ' AND deleted = 0';
-        } else {
-            query += ' AND deleted = 1';
-        }
-
-        if(params.content !== null && params.content !== undefined && params.content !== '') {
-            query += ' AND name like ?';
-            filters.push(`%${params.content}%`);
-        }
-
-        const stmt = this.db.prepare(query);
-        const result = stmt.get(filters);
-        return result.total;        
 
     }
 
@@ -98,14 +73,33 @@ class ContainerDB {
         try {
 
             const query = `
-                INSERT INTO ${this.constructor.TB_NAME}(name, dimensions, description, seller_id) 
-                VALUES(?, ?, ?, ?)
+                INSERT INTO ${this.constructor.TB_NAME}(
+                    name
+                    , short_description
+                    , description
+                    , website
+                    , email
+                    , phone_number
+                    , address
+                    , city
+                    , postal_code
+                    , state
+                    , country
+                ) 
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
             const values = Array();
             values.push(params.name);
-            values.push(params.dimensions);
+            values.push(params.shortDescription);
             values.push(params.description);
-            values.push(params.seller);
+            values.push(params.website);
+            values.push(params.email);
+            values.push(params.phoneNumber);
+            values.push(params.address);
+            values.push(params.city);
+            values.push(params.postalCode);
+            values.push(params.state);
+            values.push(params.country);
 
             const stmt = this.db.prepare(query);
             const info = stmt.run(values);
@@ -129,17 +123,31 @@ class ContainerDB {
             const query = `
                 UPDATE ${this.constructor.TB_NAME}
                 set name = ?
-                , dimensions = ?
+                , short_description = ?
                 , description = ?
-                , seller_id = ?
+                , website = ?
+                , email = ?
+                , phone_number = ?
+                , address = ?
+                , city = ?
+                , postal_code = ?
+                , state = ?
+                , country = ?
                 , date_update = CURRENT_TIMESTAMP
                 WHERE id = ?
             `;
             const values = Array();
             values.push(params.name);
-            values.push(params.dimensions);
+            values.push(params.shortDescription);
             values.push(params.description);
-            values.push(params.seller);
+            values.push(params.website);
+            values.push(params.email);
+            values.push(params.phoneNumber);
+            values.push(params.address);
+            values.push(params.city);
+            values.push(params.postalCode);
+            values.push(params.state);
+            values.push(params.country);
             values.push(params.id);
 
             const stmt = this.db.prepare(query);
@@ -204,4 +212,4 @@ class ContainerDB {
 }
 
 
-export default ContainerDB;
+export default SellerDB;

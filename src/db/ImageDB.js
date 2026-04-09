@@ -36,7 +36,7 @@ class ImageDB {
             filters.push(params.elementId);
         }
 
-        query += ' ORDER BY id';
+        query += ' ORDER BY sort, id';
 
         const stmt = this.db.prepare(query);
 
@@ -59,13 +59,14 @@ class ImageDB {
         try {
 
             const query = `
-                INSERT INTO image(element_name, element_id, filename) 
-                VALUES(?, ?, ?)
+                INSERT INTO image(element_name, element_id, filename, sort) 
+                VALUES(?, ?, ?, ?)
             `;
             const values = Array();
             values.push(params.elementName);
             values.push(params.elementId);
             values.push(params.filename);
+            values.push(params.sort);
 
             const stmt = this.db.prepare(query);
             const info = stmt.run(values);
@@ -156,6 +157,50 @@ class ImageDB {
             }
             
         }
+
+    }
+
+    updateOrders(orderedIds) {
+
+        try {
+
+            const query = "UPDATE image SET sort = ? WHERE id = ?";
+        
+            for(let i = 0; i < orderedIds.length; i++) {
+
+                const id = orderedIds[i];
+                const newSortValue = i;
+            
+                const values = Array();
+                values.push(newSortValue);
+                values.push(id);
+
+                const stmt = this.db.prepare(query);
+                stmt.run(values);    
+
+            }
+
+            return { success: true };
+
+        } catch (error) {
+            return {
+                error: err.message,
+            }
+        }
+
+    }
+
+    getLastSort(elementName, elementId) {
+
+        const query = `
+            SELECT COALESCE(MAX(sort), -1) as lastSort 
+            FROM image 
+            WHERE element_name = ? and element_id = ?
+        `;
+
+        const stmt = this.db.prepare(query);
+        const element = stmt.get(elementName, elementId);
+        return element.lastSort;
 
     }
 

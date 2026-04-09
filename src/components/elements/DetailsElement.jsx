@@ -1,25 +1,67 @@
+import { AppIcons } from '../../utils/iconUtils';
+
 const DetailsElement = ({ data }) => {
 
-  return (
+    const handleClick = (e, item) => {
 
-    <>
-        <table className="table table-borderless align-middle mb-0">
-            <tbody>
-                {data.map((item, index) => (
-                    <tr key={index}>
-                        <td className="text-muted fw-bold col-md-3">
-                            {item.label}
-                        </td>
-                        <td 
-                            className="fw-semibold text-dark"
-                            dangerouslySetInnerHTML={{__html: item.value}} 
-                        />
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    </>
-  );
+        e.preventDefault();
+        
+        let url = item.value;
+
+        if (!url) return;
+
+        if (item.type === 'email') {
+            url = `mailto:${item.value}`;
+        } else if (item.type === 'website') {
+            if (!/^https?:\/\//i.test(url)) {
+                url = `https://${url}`;
+            }
+        }
+
+        window.electronAPI.openLink(url);
+
+    };
+
+    return (
+        <>
+            <table className="table table-borderless align-middle mb-0">
+
+                <tbody>
+                    
+                    {data.map((item, index) => (
+                        <tr key={index}>
+                            <td className="text-muted fw-bold col-md-3">
+                                {item.label}
+                            </td>
+                            {(item.type === 'website' || item.type === 'email') ? (
+                                <td 
+                                    className="fw-semibold text-primary"
+                                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                    onClick={(e) => handleClick(e, item)}
+                                >
+                                    {item.type === 'website' ? (
+                                        <AppIcons.Website />
+                                    ) : (
+                                        <AppIcons.Email />
+                                    )}
+                                    &nbsp;{item.value}
+                                </td>
+                            ) : (
+                                <td className="fw-semibold text-dark">
+                                    {item.value}
+                                </td>
+                            )}
+                        </tr>
+                    ))}
+
+                </tbody>
+
+            </table>
+
+        </>
+    );
 };
 
 export default DetailsElement;
+
+//                             dangerouslySetInnerHTML={{__html: item.value}} 

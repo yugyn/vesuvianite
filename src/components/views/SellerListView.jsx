@@ -1,9 +1,9 @@
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import ContainerList from '../lists/ContainerList';
+import SellerList from '../lists/SellerList';
 
-const ContainerListView = () => {
+const SellerListView = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -39,7 +39,7 @@ const ContainerListView = () => {
                     {notification}
                 </div>
             )}
-            <ContainerList />
+            <SellerList />
 
         </>
     );
@@ -47,4 +47,4 @@ const ContainerListView = () => {
 };
 
 
-export default ContainerListView;
+export default SellerListView;

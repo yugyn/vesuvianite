@@ -5,7 +5,7 @@ import { VIEW_TABLE, VIEW_LIST } from '../../costants';
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
 
-const ContainerList = ({ elementName, elementId, subList }) => {
+const SellerList = ({ subList }) => {
 
     const { t } = useTranslation();
 
@@ -20,12 +20,8 @@ const ContainerList = ({ elementName, elementId, subList }) => {
             total: 0
     });
 
-    const [sellers, setSellers] = useState(null);
-
     const initialFilters = {
         content: null,
-        dimensions: null,
-        seller: null,
     };    
     const [filters, setFilters] = useState(initialFilters);
     const [reallyFilters, setReallyFilters] = useState(initialFilters);
@@ -35,24 +31,13 @@ const ContainerList = ({ elementName, elementId, subList }) => {
 
         try {
 
-            const data = await window.electronAPI.getAllContainers(reallyFilters);
+            const data = await window.electronAPI.getAllSellers(reallyFilters);
             if(data) {
                 setElements(data);
             } else {
                 setError("Not found.");
             }
 
-            const dataCounts = await window.electronAPI.getAllContainersCount(reallyFilters);
-            if(dataCounts) {
-                setCounts(dataCounts);
-            }
-
-//            const dataS = await window.electronAPI.getAllCrystalSystems();
-            const dataS = [];
-            if(dataS) {
-                setSellers(dataS);
-            }
-            
         } catch(err) {
             setError("Error...");
             console.error(err);
@@ -84,15 +69,9 @@ const ContainerList = ({ elementName, elementId, subList }) => {
         setError(null);
 
         const content = document.getElementById('searchContent').value.trim();
-        const dimensions = document.getElementById('searchDimensions').value;
-        const seller = document.getElementById('searchSeller').value;
 
         setFilters({
             content: content,
-            seller: seller,
-            dimensions: dimensions,
-            elementName: elementName,
-            elementId: elementId,
         });
 
         setReallyFilters(filters);
@@ -110,14 +89,14 @@ const ContainerList = ({ elementName, elementId, subList }) => {
         <>
 
             <PageHeader 
-                title={`${t('container.list.title')} (${elements.length})`}
+                title={`${t('seller.list.title')} (${elements.length})`}
                 subTitle={subList}
             >
                 {!subList && (
                     <button 
                         className={`btn btn-outline-primary me-3`}
-                        onClick={() => navigate(`/containerForm/0`)}
-                        title={t('container.action.add')}
+                        onClick={() => navigate(`/sellerForm/0`)}
+                        title={t('seller.action.add')}
                     >
                         <AppIcons.Add />
                     </button>
@@ -161,12 +140,6 @@ const ContainerList = ({ elementName, elementId, subList }) => {
                                 <thead className="table-light">
                                     <tr>
                                         <th scope='col'>
-                                            {t('container.label')}
-                                        </th>
-                                        <th scope='col'>
-                                            {t('container.dimensions')}
-                                        </th>
-                                        <th scope='col'>
                                             {t('seller.label')}
                                         </th>
                                     </tr>
@@ -175,19 +148,10 @@ const ContainerList = ({ elementName, elementId, subList }) => {
                                     {elementsFiltered.map((item) => (
                                         <tr 
                                             key={item.id} 
-                                            onClick={() => navigate(`/container/${item.id}`)}
+                                            onClick={() => navigate(`/seller/${item.id}`)}
                                             style={{ cursor: 'pointer' }}
                                         >
                                             <td>{item.name}</td>
-                                            <td>{item.dimensions}</td>
-                                            <td>
-                                                <span 
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        navigate(`/seller/${item.sId}`);
-                                                    }}
-                                                >{item.sName}</span>
-                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -198,7 +162,7 @@ const ContainerList = ({ elementName, elementId, subList }) => {
                             {elementsFiltered.map((item) => (
                                 <div className='col' 
                                     key={item.id} 
-                                    onClick={() => navigate(`/container/${item.id}`)}
+                                    onClick={() => navigate(`/seller/${item.id}`)}
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <div className='table-responsive'>
@@ -221,44 +185,23 @@ const ContainerList = ({ elementName, elementId, subList }) => {
                     <div className='content-right'>
                         <small>
                             <b>
-                                <AppIcons.Search/> {t('container.search.title')}
+                                <AppIcons.Search/> {t('seller.search.title')}
                             </b>
                         </small>
                         <form onSubmit={handleSearch}>
                             <div className="row mt-2">
                                 <label className="col-form-label">
-                                    <small>{t('container.search.content')}</small>
+                                    <small>{t('seller.search.content')}</small>
                                 </label>
                                 <div>
                                     <input 
                                         className="form-control form-control-sm"
-                                        id="searchDimensions" 
+                                        id="searchContent" 
                                         value={filters.content || ""}
                                         onChange={(e) => setFilters({...filters, content: e.target.value})}
                                     />
                                 </div>
                             </div>
-                            <div className="row mt-2">
-                                <label className="col-form-label">
-                                    <small>{t('container.search.seller')}</small>
-                                </label>
-                                <div>
-                                    <select 
-                                        className="form-select form-select-sm"
-                                        id="searchSeller"
-                                        value={filters.seller || ""}
-                                        onChange={(e) => setFilters({...filters, seller: e.target.value})}
-                                    >
-                                        <option value=''>{t('search.any')}</option>
-                                        {sellers.map((item) => (
-                                            <option 
-                                                key={item.id}
-                                                value={item.id}
-                                            >{item.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>                
 
                             <div className="d-flex mt-4">
                                 <div>
@@ -288,4 +231,4 @@ const ContainerList = ({ elementName, elementId, subList }) => {
 };
 
 
-export default ContainerList;
+export default SellerList;

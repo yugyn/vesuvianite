@@ -4,6 +4,7 @@ import MineralClassDB from "./MineralClassDB";
 import CrystalSystemDB from "./CrystalSystemDB";
 import MineralDB from "./MineralDB";
 import ContainerDB from "./ContainerDB";
+import SellerDB from "./SellerDB";
 import ImageDB from "./ImageDB";
 import AnnotationDB from "./AnnotationDB";
 
@@ -13,6 +14,7 @@ export default function ipcHandlers(db) {
     const mineralClassDB = new MineralClassDB(db.db);
     const crystalSystemDB = new CrystalSystemDB(db.db);
     const mineralDB = new MineralDB(db.db);
+    const sellerDB = new SellerDB(db.db);
     const containerDB = new ContainerDB(db.db);
     const imageDB = new ImageDB(db.db);
     const annotationDB = new AnnotationDB(db.db);
@@ -62,7 +64,20 @@ export default function ipcHandlers(db) {
     ipcMain.handle('mineral:delete', (_, id) => {
         return mineralDB.delete(id);
     });
+    ipcMain.handle('seller:save', (_, params) => {
+        return sellerDB.save(params);
+    });
+    ipcMain.handle('seller:delete', (_, id) => {
+        return sellerDB.delete(id);
+    });
 
+
+    ipcMain.handle('seller:getAll', (_, params) => {
+        return sellerDB.getAll(params);
+    });
+    ipcMain.handle('seller:get', (_, id) => {
+        return sellerDB.get(id);
+    });
 
     ipcMain.handle('container:getAll', (_, params) => {
         return containerDB.getAll(params);
@@ -86,6 +101,9 @@ export default function ipcHandlers(db) {
 
     ipcMain.handle('image:getAll', (_, params) => {
         return imageDB.getAll(params);
+    });
+    ipcMain.handle('image:update-orders', (_, orderedIds) => {
+        return imageDB.updateOrders(orderedIds);
     });
 
     ipcMain.handle('annotation:getAll', (_, params) => {

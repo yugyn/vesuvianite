@@ -8,23 +8,23 @@ import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
 import ImageList from '../lists/ImageList';
 
-const DescriptionElement = ({element}) => {
+const ShortDescriptionElement = ({element}) => {
 
     const { t } = useTranslation();
 
     return (
         <>
 
-            <div className="mb-5">
+            <div>
                 <small>
                     <b>
-                        {t('container.description')}
+                        {t('global.shortDescription')}
                     </b>
                 </small>
                 <div className="row mt-2">
                     <div className='col'>
-                        <div style={{whiteSpace: 'pre-wrap'}}>
-                            {element.description}
+                        <div style={{whiteSpace: 'pre-wrap', minHeight: '100px', maxHeight: '200px', overflowY: 'auto'}}>
+                            {element.short_description}
                         </div>
                     </div>
                 </div>
@@ -36,4 +36,4 @@ const DescriptionElement = ({element}) => {
 };
 
 
-export default DescriptionElement;
+export default ShortDescriptionElement;

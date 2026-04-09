@@ -2,8 +2,8 @@
 
   "annotation.label": "Annotazione",
 
-  "annotation.priority.low": "Priorità bassa",
-  "annotation.priority.high": "Priorità alta",
+  "annotation.importance.low": "Annotazione normale",
+  "annotation.importance.high": "Annotazione importante",
 
   "annotation.list.title": "Annotazioni",
 

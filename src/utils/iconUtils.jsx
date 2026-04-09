@@ -11,6 +11,9 @@ export const AppIcons = {
     Back: (props) => <Icon.ArrowLeftCircle {...props} />,
     Next: (props) => <Icon.CaretRightFill {...props} />,
     Prev: (props) => <Icon.CaretLeftFill {...props} />,
+    Download: (props) => <Icon.Download {...props} />,
+    Website: (props) => <Icon.Globe {...props} />,
+    Email: (props) => <Icon.Envelope {...props} />,
 
     View: {
         Table: (props) => <Icon.ListColumns {...props} />,

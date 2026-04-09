@@ -34,8 +34,7 @@ const ContainerFormView = () => {
                 }
             }
 
-//            const dataS = await window.electronAPI.getAllCrystalSystems();
-            const dataS = [];
+            const dataS = await window.electronAPI.getAllSellers();
             if(dataS) {
                 setSellers(dataS);
             }

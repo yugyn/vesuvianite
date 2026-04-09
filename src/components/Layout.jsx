@@ -55,6 +55,12 @@ const Layout = () => {
                             >
                                 Contenitori
                             </Link>
+                            <Link 
+                                to="/sellers"
+                                className='text-white'
+                            >
+                                Venditori
+                            </Link>
                             <BackButtonElement />
                         </nav>
                     </div>

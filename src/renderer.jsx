@@ -14,6 +14,10 @@ import CrystalSystem from './components/CrystalSystem';
 import MineralListView from './components/views/MineralListView';
 import MineralView from './components/views/MineralView';
 import MineralFormView from './components/views/MineralFormView';
+
+import SellerListView from './components/views/SellerListView';
+import SellerView from './components/views/SellerView';
+import SellerFormView from './components/views/SellerFormView';
 import ContainerListView from './components/views/ContainerListView';
 import ContainerView from './components/views/ContainerView';
 import ContainerFormView from './components/views/ContainerFormView';
@@ -38,6 +42,9 @@ class App extends Component {
             <Route path="/minerals" element={<MineralListView />} />
             <Route path="/mineral/:id" element={<MineralView />} />
             <Route path="/mineralForm/:id" element={<MineralFormView />} />
+            <Route path="/sellers" element={<SellerListView />} />
+            <Route path="/seller/:id" element={<SellerView />} />
+            <Route path="/sellerForm/:id" element={<SellerFormView />} />
             <Route path="/containers" element={<ContainerListView />} />
             <Route path="/container/:id" element={<ContainerView />} />
             <Route path="/containerForm/:id" element={<ContainerFormView />} />

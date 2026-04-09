@@ -38,7 +38,7 @@ class AnnotationDB {
             filters.push(params.elementId);
         }
 
-        query += ' ORDER BY priority desc, date desc, id';
+        query += ' ORDER BY importance desc, date desc, id';
 
         const stmt = this.db.prepare(query);
 
@@ -61,14 +61,14 @@ class AnnotationDB {
         try {
 
             const query = `
-                INSERT INTO ${this.constructor.TB_NAME}(element_name, element_id, content, priority) 
+                INSERT INTO ${this.constructor.TB_NAME}(element_name, element_id, content, importance) 
                 VALUES(?, ?, ?, ?)
             `;
             const values = Array();
             values.push(params.elementName);
             values.push(params.elementId);
             values.push(params.content);
-            values.push(params.priority);
+            values.push(params.importance);
 
             const stmt = this.db.prepare(query);
             const info = stmt.run(values);
@@ -94,7 +94,7 @@ class AnnotationDB {
                 set element_name = ?
                 , element_id = ?
                 , content = ?
-                , priority = ?
+                , importance = ?
                 , date_update = CURRENT_TIMESTAMP
                 , date = CURRENT_TIMESTAMP
                 WHERE id = ?
@@ -103,7 +103,7 @@ class AnnotationDB {
             values.push(params.elementName);
             values.push(params.elementId);
             values.push(params.content);
-            values.push(params.priority);
+            values.push(params.importance);
             values.push(params.id);
 
             const stmt = this.db.prepare(query);

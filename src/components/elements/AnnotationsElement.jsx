@@ -33,14 +33,14 @@ const AnnotationsElement = ({elementName, elementId}) => {
     const handleSave = async () => {
 
         const id = document.getElementById('id').value;
-        const priority = document.getElementById('priority').value;
+        const importance = document.getElementById('importance').value;
         const content = document.getElementById('content').value;
 
         const res = await window.electronAPI.saveAnnotation({ 
             elementName: elementName, 
             elementId: elementId, 
             id: id,
-            priority: priority,
+            importance: importance,
             content: content,
         });
 
@@ -135,7 +135,7 @@ const AnnotationsElement = ({elementName, elementId}) => {
 
             {elements.map((item) => (
                 <div 
-                    className={`note note-${item.priority}`}
+                    className={`note note-${item.importance}`}
                     key={item.id} 
                     style={{ cursor: 'pointer' }}
                     onClick={() => handleEdit(item)}
@@ -179,11 +179,11 @@ const AnnotationsElement = ({elementName, elementId}) => {
                                     <div className="col">
                                         <select 
                                             className="form-select form-select-sm"
-                                            id="priority"
-                                            defaultValue={element?.priority}
+                                            id="importance"
+                                            defaultValue={element?.importance}
                                         >
-                                            <option value="0">{t('annotation.priority.low')}</option>
-                                            <option value="1">{t('annotation.priority.high')}</option>
+                                            <option value="0">{t('annotation.importance.low')}</option>
+                                            <option value="1">{t('annotation.importance.high')}</option>
                                         </select>
                                     </div>
                                 </div>

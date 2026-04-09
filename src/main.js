@@ -215,28 +215,30 @@ ipcMain.handle('image:save-multiple', async (event, params) => {
 
     const results = [];
     const destPath = PATH_IMAGE + params.elementName;  
-console.log("destPath:::" + destPath);    
 
-  	fs.mkdirSync(path.dirname(destPath), { recursive: true });
+  	fs.mkdirSync(destPath, { recursive: true });
+
+  	const imageDB = new ImageDB(db.db);
+    let sort = imageDB.getLastSort(params.elementName, params.elementId);
 
     for (const sourcePath of params.pathsSorgente) {
-console.log("sourcePath:::" + sourcePath);      
+
+        sort++;
+
         try {
 
           const fileName = params.elementId + '_' + Date.now() + path.extname(sourcePath);
           const destPathFile = destPath + '/' + fileName;
-console.log("fileName:::" + fileName);      
-console.log("destPathFile:::" + destPathFile);      
 
           fs.copyFileSync(sourcePath, destPathFile);
 
-  	      const imageDB = new ImageDB(db.db);
-  	      const paramsDB = {elementName: params.elementName, elementId: params.elementId, filename: fileName};
+  	      const paramsDB = {elementName: params.elementName, elementId: params.elementId, filename: fileName, sort: sort};
     	    imageDB.save(paramsDB);
 
         } catch (err) {
-            console.error(`Errore caricamento file ${pathSorgente}:`, err);
+            console.error(`Errore caricamento file:`, err);
         }
+
     }
     return results;
 
@@ -268,4 +270,35 @@ ipcMain.handle('image:delete', async (event, { id, pathFile, deleted }) => {
         return { success: false, error: error.message };
     }
 
+});
+
+
+
+ipcMain.handle('file:download', async (event, { sourcePath, fileName }) => {
+
+    // 1. Apri la finestra di dialogo del sistema
+    const { filePath } = await dialog.showSaveDialog({
+        title: 'Salva immagine',
+        defaultPath: fileName,
+        buttonLabel: 'Salva',
+        filters: [{ name: 'Immagini', extensions: ['jpg', 'png', 'gif', 'jpeg'] }]
+    });
+
+    // 2. Se l'utente non annulla, copia il file
+    if (filePath) {
+        try {
+            fs.copyFileSync(sourcePath, filePath);
+            return { success: true, path: filePath };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
+    }
+    return { success: false, canceled: true };
+    
+});
+
+
+
+ipcMain.on('link:open', (event, url) => {
+    shell.openExternal(url);
 });

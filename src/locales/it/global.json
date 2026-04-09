@@ -1,5 +1,8 @@
 {
 
+  "global.shortDescription": "Descrizione breve",
+  "global.description": "Descrizione",
+
   "action": {
       "save": "Salva",
       "delete": "Elimina",
