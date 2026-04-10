@@ -7,7 +7,7 @@ import NoImageFallback from '../../images/1.jpg';
 import ImageGridElement from '../elements/ImageGridElement';
 import ImageViewerElement from '../elements/ImageViewerElement';
 
-const ImageList = ({ elementName, elementId, small }) => {
+const ImageList = ({ elementName, elementId, small, noAdd }) => {
 
     const { t } = useTranslation();
 
@@ -134,13 +134,15 @@ const ImageList = ({ elementName, elementId, small }) => {
                     </small>
 
                     <div className="d-flex gap-2">
-                        <button 
-                            className="btn btn-outline-primary btn-xs" 
-                            onClick={handleUpload}
-                            title={t('image.action.add')}
-                        >
-                            <AppIcons.Add />
-                        </button>
+                        {!noAdd && (
+                            <button 
+                                className="btn btn-outline-primary btn-xs" 
+                                onClick={handleUpload}
+                                title={t('image.action.add')}
+                            >
+                                <AppIcons.Add />
+                            </button>
+                        )}
                     </div>
 
                 </div>

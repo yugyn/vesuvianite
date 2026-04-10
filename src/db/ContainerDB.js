@@ -31,6 +31,11 @@ class ContainerDB {
             WHERE true 
         `;
 
+        if(params.sellerId !== null && params.sellerId !== undefined && params.sellerId !== '') {
+            query += ' AND s.id = ?';
+            filters.push(params.sellerId);
+        }
+
         if(params.deleted !== null && params.deleted !== '') {
             query += ' AND c.deleted = 0';
         } else {

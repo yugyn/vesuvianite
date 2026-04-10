@@ -8,11 +8,14 @@ import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
 import ImageList from '../lists/ImageList';
 import ShortDescriptionElement from '../elements/ShortDescriptionElement';
+import DescriptionElement from '../elements/DescriptionElement';
 import AnnotationsElement from '../elements/AnnotationsElement';
 import ContainerList from '../lists/ContainerList';
 import { fullAddress } from '../../utils/sellerUtils';
 
 const SellerView = () => {
+
+    const elementName = 'seller';
 
     const { t } = useTranslation();
 
@@ -24,17 +27,6 @@ const SellerView = () => {
     const [element, setElement] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [notification, setNotification] = useState("");
-
-    async function loadNotification() {
-
-        if(location.state && location.state.message) {
-            setNotification(location.state.message);
-//            const timer = setTimeout(() => setNotification(""), 5000);
-//            return () => clearTimeout(timer);
-        }
-
-    }
 
     const details = useMemo(() => {
 
@@ -71,7 +63,6 @@ const SellerView = () => {
     useEffect( () => {
         if(id) {
             loadAll();
-            loadNotification();
         }
     }, [id]);
     
@@ -100,36 +91,42 @@ const SellerView = () => {
 
     return (
         <>
-            {notification && (
-                <div style={{ 
-                    padding: '10px', 
-                    backgroundColor: '#d4edda', 
-                    color: '#155724',
-                    borderRadius: '5px',
-                    marginBottom: '20px' 
-                }}>
-                    {notification}
-                </div>
-            )}
-
             <PageHeader 
                 title={t('seller.label')}
                 name={element.name}
             >
-                <button 
-                    className={`btn btn-outline-primary me-3`}
-                    onClick={() => navigate(`/sellers`)}
-                    title={t('seller.action.back.sellers')}
-                >
-                    <AppIcons.Back />
-                </button>
-                <button 
-                    className={`btn btn-outline-primary me-1`}
-                    onClick={() => navigate(`/sellerForm/${element.id}`)}
-                    title={t('seller.action.edit')}
-                >
-                    <AppIcons.Edit />
-                </button>
+                {element.deleted ? (
+
+                    <>
+                        <button 
+                            className={`btn btn-outline-primary me-3`}
+                            onClick={() => navigate(`/trash/${elementName}`)}
+                            title={t('trash.label')}
+                        >
+                            <AppIcons.Back />
+                        </button>
+                    </>
+
+                ) : (
+
+                    <>
+                        <button 
+                            className={`btn btn-outline-primary me-3`}
+                            onClick={() => navigate(`/sellers`)}
+                            title={t('seller.action.back.sellers')}
+                        >
+                            <AppIcons.Back />
+                        </button>
+                        <button 
+                            className={`btn btn-outline-primary me-1`}
+                            onClick={() => navigate(`/sellerForm/${element.id}`)}
+                            title={t('seller.action.edit')}
+                        >
+                            <AppIcons.Edit />
+                        </button>
+                    </>
+
+                )}
                 <button 
                     className={`btn btn-outline-danger me-1`}
                     onClick={handleDelete}
@@ -148,15 +145,14 @@ const SellerView = () => {
 
                     <div className='content-sublist'>
                         <ContainerList
-                            elementName='seller'
-                            elementId={id}
+                            sellerId={id}
                             subList={true}
                         />
                     </div>
                     
-                    <p className='mt-5'>
-                        {element.description}
-                    </p>
+                    <DescriptionElement
+                        element={element}
+                    />
 
                 </div>
                 <div className='col-md-2'>
@@ -166,6 +162,7 @@ const SellerView = () => {
                         <AnnotationsElement
                             elementName='seller'
                             elementId={element.id}
+                            noAdd={true}
                         />
 
                         <hr/>
@@ -180,6 +177,7 @@ const SellerView = () => {
                             elementName='seller'
                             elementId={id}
                             small={true}
+                            noAdd={true}
                         />
 
                     </div>

@@ -6,6 +6,10 @@ import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import {createRoot} from 'react-dom/client';
 
 import Home from './components/Home';
+
+import TrashListView from './components/views/TrashListView';
+import TrashView from './components/views/TrashView';
+
 import Gallery from './components/Gallery';
 import ToDo from './components/ToDo';
 import MineralClasses from './components/MineralClasses';
@@ -34,6 +38,8 @@ class App extends Component {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/trashes" element={<TrashListView />} />
+            <Route path="/trash/:element" element={<TrashView />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/todo" element={<ToDo />} />
             <Route path="/mineralClasses" element={<MineralClasses />} />

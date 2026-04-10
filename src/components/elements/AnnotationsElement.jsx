@@ -9,7 +9,7 @@ import PageHeader from '../elements/PageHeaderElement';
 import ImageList from '../lists/ImageList';
 import { formatDate} from '../../utils/utils'
 
-const AnnotationsElement = ({elementName, elementId}) => {
+const AnnotationsElement = ({elementName, elementId, noAdd}) => {
 
     const { t } = useTranslation();
 
@@ -122,13 +122,15 @@ const AnnotationsElement = ({elementName, elementId}) => {
                 </small>
 
                 <div className="d-flex gap-2">
-                    <button 
-                        className={`btn btn-xs btn-outline-primary`}
-                        onClick={() => handleAdd()}
-                        title={t('annotation.action.add')}
-                    >
-                        <AppIcons.Add />
-                    </button>
+                    {!noAdd && (
+                        <button 
+                            className={`btn btn-xs btn-outline-primary`}
+                            onClick={() => handleAdd()}
+                            title={t('annotation.action.add')}
+                        >
+                            <AppIcons.Add />
+                        </button>
+                    )}
                 </div>
 
             </div>

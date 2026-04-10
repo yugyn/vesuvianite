@@ -89,10 +89,16 @@ const SellerFormView = () => {
 
         const result = await window.electronAPI.saveSeller(params);
         if(result.success) {
+            window.dispatchEvent(new CustomEvent('app-notify', { 
+                detail: { message: t('seller.message.saved'), type: 'success' } 
+            }));
             navigate(`/seller/${result.id}`, {
                 state: {message: "Elemento salvato con successo."} 
             });
         } else {
+            window.dispatchEvent(new CustomEvent('app-notify', { 
+                detail: { message: `${t('golabl.message.error.saved')}: ${result.error}`, type: 'danger' } 
+            }));            
             setError(result.error);
         }
 

@@ -2,6 +2,8 @@
 
   "seller": {
 
+    "message.saved": "Venditore salvato con successo.",
+
     "label": "Venditore",
     "name": "Nome",
     "website": "Pagina web",

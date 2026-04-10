@@ -35,8 +35,8 @@ const DetailsElement = ({ data }) => {
                             </td>
                             {(item.type === 'website' || item.type === 'email') ? (
                                 <td 
-                                    className="fw-semibold text-primary"
-                                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                    className="text-primary"
+                                    style={{ cursor: 'pointer', }}
                                     onClick={(e) => handleClick(e, item)}
                                 >
                                     {item.type === 'website' ? (
@@ -47,7 +47,7 @@ const DetailsElement = ({ data }) => {
                                     &nbsp;{item.value}
                                 </td>
                             ) : (
-                                <td className="fw-semibold text-dark">
+                                <td className="text-dark">
                                     {item.value}
                                 </td>
                             )}

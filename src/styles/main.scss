@@ -228,3 +228,72 @@ div.page {
   filter: brightness(90%);
   transition: filter 0.2s;
 }
+
+
+
+
+/* Toast Notification in basso a destra */
+.notification-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    min-width: 250px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+    
+    /* Animazione: entra da destra */
+    transform: translateX(120%);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+}
+
+.notification-toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Colori e icone */
+.bg-success { 
+    color: #155724;
+    background-color: #d4edda !important; 
+    border-left: 5px solid #1e7e34; 
+}
+.bg-danger { 
+    background-color: #dc3545 !important; 
+    border-left: 5px solid #bd2130; 
+}
+
+
+
+.text-primary {
+    color: #4B6E03 !important;
+    transition: color 0.2s ease-in-out;
+}
+
+.text-primary:hover {
+    color: #8BAE43 !important;
+    text-decoration: underline;
+}
+
+.fw-semibold.text-primary {
+    cursor: pointer;
+}
+
+.element-link {
+    color: #4B6E03 !important;
+    transition: color 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.element-link:hover {
+    color: #8BAE43 !important;
+    text-decoration: underline;
+}
+

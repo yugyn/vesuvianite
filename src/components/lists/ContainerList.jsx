@@ -5,7 +5,7 @@ import { VIEW_TABLE, VIEW_LIST } from '../../costants';
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
 
-const ContainerList = ({ elementName, elementId, subList }) => {
+const ContainerList = ({ sellerId, subList }) => {
 
     const { t } = useTranslation();
 
@@ -23,6 +23,7 @@ const ContainerList = ({ elementName, elementId, subList }) => {
     const [sellers, setSellers] = useState(null);
 
     const initialFilters = {
+        sellerId: sellerId,
         content: null,
         dimensions: null,
         seller: null,

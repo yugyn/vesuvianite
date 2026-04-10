@@ -1,6 +1,8 @@
 
 class ImageDB {
 
+    static TB_NAME = 'image';
+
     constructor(db) {
         this.db = db
     }
@@ -203,6 +205,36 @@ class ImageDB {
         return element.lastSort;
 
     }
+
+
+    getAllDeleted() {
+
+        let query = `
+            SELECT * FROM ${this.constructor.TB_NAME} 
+            WHERE deleted = 1 
+            ORDER by date_delete 
+        `;
+
+        const stmt = this.db.prepare(query);
+
+        return stmt.all();
+
+    }
+
+    getAllDeletedCount() {
+
+        let query = `
+            SELECT count(*) AS total FROM ${this.constructor.TB_NAME} 
+            WHERE deleted = 1 
+        `;
+
+        const stmt = this.db.prepare(query);
+        const result = stmt.get();
+        return result.total;        
+
+
+    }
+
 
 }
 

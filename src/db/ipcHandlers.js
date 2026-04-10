@@ -1,5 +1,6 @@
 import { ipcMain } from "electron";
-import TaskDatabase from "./taskDatabase";
+
+import TrashDB from "./TrashDB";
 import MineralClassDB from "./MineralClassDB";
 import CrystalSystemDB from "./CrystalSystemDB";
 import MineralDB from "./MineralDB";
@@ -10,7 +11,7 @@ import AnnotationDB from "./AnnotationDB";
 
 export default function ipcHandlers(db) {
 
-    const taskDB = new TaskDatabase(db.db);
+    const trashDB = new TrashDB(db.db);
     const mineralClassDB = new MineralClassDB(db.db);
     const crystalSystemDB = new CrystalSystemDB(db.db);
     const mineralDB = new MineralDB(db.db);
@@ -19,21 +20,14 @@ export default function ipcHandlers(db) {
     const imageDB = new ImageDB(db.db);
     const annotationDB = new AnnotationDB(db.db);
 
-    ipcMain.handle('tasks:add', (_, title) => {
-        return taskDB.addTask(title);
+    ipcMain.handle('trash:getAll', (_, element) => {
+        return trashDB.getAll(element);
+    });
+    ipcMain.handle('trash:getAllCounts', () => {
+        return trashDB.getAllCounts();
     });
 
-    ipcMain.handle('tasks:delete', (_, id) => {
-        return taskDB.deleteTask(id);
-    });
 
-    ipcMain.handle('tasks:complete', (_, params) => {
-        return taskDB.completeTask(params.id, params.completed);
-    });
-
-    ipcMain.handle('tasks:getAll', () => {
-        return taskDB.getAllTasks();
-    });
 
     ipcMain.handle('mineralClass:getAll', () => {
         return mineralClassDB.getAll();

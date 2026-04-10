@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
@@ -9,6 +10,24 @@ const Layout = () => {
 //    const headerHeight = '56px';
     const sidebarWidth = '200px';
     const headerHeight = '80px';
+
+    const [notification, setNotification] = useState({ message: '', visible: false, type: 'success' });
+
+    useEffect(() => {
+        // Ascoltiamo l'evento personalizzato 'app-notify'
+        const handleNotify = (event) => {
+            const { message, type = 'success' } = event.detail;
+            setNotification({ message, visible: true, type });
+
+            // Nascondi automaticamente dopo 3 secondi
+            setTimeout(() => {
+                setNotification(prev => ({ ...prev, visible: false }));
+            }, 3000);
+        };
+
+        window.addEventListener('app-notify', handleNotify);
+        return () => window.removeEventListener('app-notify', handleNotify);
+    }, []);    
 
     return (
 
@@ -62,6 +81,12 @@ const Layout = () => {
                                 Venditori
                             </Link>
                             <BackButtonElement />
+                            <Link 
+                                to="/trashes"
+                                className='text-white'
+                            >
+                                Cestino
+                            </Link>
                         </nav>
                     </div>
                 </nav>
@@ -111,6 +136,17 @@ const Layout = () => {
                 </div>
 
             </div>
+
+            <div className={`notification-toast ${notification.visible ? 'show' : ''} bg-${notification.type}`}>
+                <span>{notification.message}</span>
+                <button 
+                    onClick={() => setNotification(prev => ({ ...prev, visible: false }))}
+                    style={{ background: 'none', border: 'none', color: 'white', marginLeft: '15px', cursor: 'pointer' }}
+                >
+                    <i className="bi bi-x-lg"></i>
+                </button>
+            </div>                        
+
         </>
         
     );
