@@ -211,68 +211,36 @@ ipcMain.handle('image:upload-multiple', async (event, params) => {
 
 });
 
-ipcMain.handle('image:save-multiple', async (event, params) => {
 
-    const results = [];
-    const destPath = PATH_IMAGE + params.elementName;  
 
-  	fs.mkdirSync(destPath, { recursive: true });
 
-  	const imageDB = new ImageDB(db.db);
-    let sort = imageDB.getLastSort(params.elementName, params.elementId);
 
-    for (const sourcePath of params.pathsSorgente) {
 
-        sort++;
 
-        try {
 
-          const fileName = params.elementId + '_' + Date.now() + path.extname(sourcePath);
-          const destPathFile = destPath + '/' + fileName;
 
-          fs.copyFileSync(sourcePath, destPathFile);
-
-  	      const paramsDB = {elementName: params.elementName, elementId: params.elementId, filename: fileName, sort: sort};
-    	    imageDB.save(paramsDB);
-
-        } catch (err) {
-            console.error(`Errore caricamento file:`, err);
-        }
-
-    }
-    return results;
-
+ipcMain.on('link:open', (event, url) => {
+    shell.openExternal(url);
 });
 
 
-ipcMain.handle('image:delete', async (event, { id, pathFile, deleted }) => {
-    
-	try {
 
-	  	const imageDB = new ImageDB(db.db);
-        await imageDB.delete(id);
 
-		if(deleted) {
+ipcMain.handle('folder:delete', async (event, {path}) => {
+  
+    try {
 
-			if (fs.existsSync(pathFile)) {
-				fs.unlinkSync(pathFile);
-			} else {
-				console.warn("File non trovato sul disco, ma rimosso dal DB:", pathFile);
-				return { success: true, message: "File fisico non trovato" };
-			}
-
-		}
-
-		return { success: true };
-
+        if (fs.existsSync(path)) {
+            fs.rmSync(path, { recursive: true, force: true });
+            return { success: true };
+        }
+        
     } catch (error) {
-        console.error("Errore durante l'eliminazione:", error);
+        console.error("Errore rimozione cartella:", error);
         return { success: false, error: error.message };
     }
 
 });
-
-
 
 ipcMain.handle('file:download', async (event, { sourcePath, fileName }) => {
 
@@ -298,7 +266,56 @@ ipcMain.handle('file:download', async (event, { sourcePath, fileName }) => {
 });
 
 
+ipcMain.handle('file:delete', async (event, { pathFile }) => {
+    
+	try {
 
-ipcMain.on('link:open', (event, url) => {
-    shell.openExternal(url);
+      if (fs.existsSync(pathFile)) {
+        fs.unlinkSync(pathFile);
+      } else {
+        console.warn("File non trovato sul disco, ma rimosso dal DB:", pathFile);
+        return { success: true, message: "File fisico non trovato" };
+      }
+
+      return { success: true };
+
+    } catch (error) {
+        console.error("Errore durante l'eliminazione:", error);
+        return { success: false, error: error.message };
+    }
+
+});
+
+
+ipcMain.handle('image:save-multiple', async (event, params) => {
+
+    const results = [];
+    const destPath = PATH_IMAGE + params.elementName + '/' + params.elementId;  
+
+  	fs.mkdirSync(destPath, { recursive: true });
+
+  	const imageDB = new ImageDB(db.db);
+    let sort = imageDB.getLastSort(params.elementName, params.elementId);
+
+    for (const sourcePath of params.pathsSorgente) {
+
+        sort++;
+
+        try {
+
+          const fileName = Date.now() + path.extname(sourcePath);
+          const destPathFile = destPath + '/' + fileName;
+
+          fs.copyFileSync(sourcePath, destPathFile);
+
+  	      const paramsDB = {elementName: params.elementName, elementId: params.elementId, filename: fileName, sort: sort};
+    	    imageDB.save(paramsDB);
+
+        } catch (err) {
+            console.error(`Errore caricamento file:`, err);
+        }
+
+    }
+    return results;
+
 });

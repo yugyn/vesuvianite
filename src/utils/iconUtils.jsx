@@ -8,12 +8,14 @@ export const AppIcons = {
     Add: (props) => <Icon.PlusLg {...props} />,
     Edit: (props) => <Icon.Pencil {...props} />,
     Delete: (props) => <Icon.XCircle {...props} />,
+    Restore: (props) => <Icon.Recycle {...props} />,
     Back: (props) => <Icon.ArrowLeftCircle {...props} />,
     Next: (props) => <Icon.CaretRightFill {...props} />,
     Prev: (props) => <Icon.CaretLeftFill {...props} />,
     Download: (props) => <Icon.Download {...props} />,
     Website: (props) => <Icon.Globe {...props} />,
     Email: (props) => <Icon.Envelope {...props} />,
+    Map: (props) => <Icon.PinMap {...props} />,
 
     View: {
         Table: (props) => <Icon.ListColumns {...props} />,

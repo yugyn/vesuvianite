@@ -5,7 +5,7 @@ import { VIEW_TABLE, VIEW_LIST } from '../../costants';
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
 
-const ContainerList = ({ sellerId, subList }) => {
+const ContainerList = ({ sellerId, subList, deleted }) => {
 
     const { t } = useTranslation();
 
@@ -27,6 +27,7 @@ const ContainerList = ({ sellerId, subList }) => {
         content: null,
         dimensions: null,
         seller: null,
+        includeSellerDeleted: subList,
     };    
     const [filters, setFilters] = useState(initialFilters);
     const [reallyFilters, setReallyFilters] = useState(initialFilters);
@@ -48,7 +49,6 @@ const ContainerList = ({ sellerId, subList }) => {
                 setCounts(dataCounts);
             }
 
-//            const dataS = await window.electronAPI.getAllCrystalSystems();
             const dataS = [];
             if(dataS) {
                 setSellers(dataS);
@@ -114,48 +114,54 @@ const ContainerList = ({ sellerId, subList }) => {
                 title={`${t('container.list.title')} (${elements.length})`}
                 subTitle={subList}
             >
-                {!subList && (
-                    <button 
-                        className={`btn btn-outline-primary me-3`}
-                        onClick={() => navigate(`/containerForm/0`)}
-                        title={t('container.action.add')}
-                    >
-                        <AppIcons.Add />
-                    </button>
+                {!deleted && (
+
+                    <>
+                        <button 
+                            className={`btn btn-outline-primary me-3`}
+                            onClick={() => navigate(`/containerForm/0/${sellerId}`)}
+                            title={t('container.action.add')}
+                        >
+                            <AppIcons.Add />
+                        </button>
+                        <div className='btn-group' role='group'>
+                            <button 
+                                className={`btn btn-outline-secondary ${view === VIEW_TABLE ? 'active' : ''}`}
+                                onClick={() => changeView(VIEW_TABLE)}
+                                title={t('view.action.change.table')}
+                            >
+                                <AppIcons.View.Table />
+                            </button>                    
+                            <button 
+                                className={`btn btn-outline-secondary ${view === VIEW_LIST ? 'active' : ''}`}
+                                onClick={() => changeView(VIEW_LIST)}
+                                title={t('view.action.change.list')}
+                            >
+                                <AppIcons.View.List />
+                            </button>                    
+                        </div>
+                    </>
+
                 )}
-                <div className='btn-group' role='group'>
-                    <button 
-                        className={`btn btn-outline-secondary ${view === VIEW_TABLE ? 'active' : ''}`}
-                        onClick={() => changeView(VIEW_TABLE)}
-                        title={t('view.action.change.table')}
-                    >
-                        <AppIcons.View.Table />
-                    </button>                    
-                    <button 
-                        className={`btn btn-outline-secondary ${view === VIEW_LIST ? 'active' : ''}`}
-                        onClick={() => changeView(VIEW_LIST)}
-                        title={t('view.action.change.list')}
-                    >
-                        <AppIcons.View.List />
-                    </button>                    
-                </div>
             </PageHeader>            
 
 
             <div className='row'>
-                <div className='col-md-10'>
-                    <div className='row' style={{marginBottom: '15px'}}>
-                        <div className='col-md-9'>
+                <div className={`col-md-${subList ? '12' : '10'}`}>
+                    {!deleted && (
+                        <div className='row' style={{marginBottom: '15px'}}>
+                            <div className='col-md-9'>
+                            </div>
+                            <div className='col-md-3'>
+                                <input 
+                                    type='search' 
+                                    className='form-control form-control-sm' 
+                                    placeholder={t('search.quick')}
+                                    onChange={(e) => setSearch(e.target.value)} 
+                                />
+                            </div>
                         </div>
-                        <div className='col-md-3'>
-                            <input 
-                                type='search' 
-                                className='form-control form-control-sm' 
-                                placeholder={t('search.quick')}
-                                onChange={(e) => setSearch(e.target.value)} 
-                            />
-                        </div>
-                    </div>
+                    )}
                     {view == 0 ? (
                         <div className='table-responsive'>
                             <table className="table table-bordered table-hover datatable-table" style={{ tableLayout: 'fixed' }}>
@@ -223,70 +229,75 @@ const ContainerList = ({ sellerId, subList }) => {
                         </div>
                     )}
                 </div>
-                <div className='col-md-2'>
-                    <div className='content-right'>
-                        <small>
-                            <b>
-                                <AppIcons.Search/> {t('container.search.title')}
-                            </b>
-                        </small>
-                        <form onSubmit={handleSearch}>
-                            <div className="row mt-2">
-                                <label className="col-form-label">
-                                    <small>{t('container.search.content')}</small>
-                                </label>
-                                <div>
-                                    <input 
-                                        className="form-control form-control-sm"
-                                        id="searchContent" 
-                                        value={filters.content || ""}
-                                        onChange={(e) => setFilters({...filters, content: e.target.value})}
-                                    />
-                                </div>
-                            </div>
-                            <div className="row mt-2">
-                                <label className="col-form-label">
-                                    <small>{t('container.search.seller')}</small>
-                                </label>
-                                <div>
-                                    <select 
-                                        className="form-select form-select-sm"
-                                        id="searchSeller"
-                                        value={filters.seller || ""}
-                                        onChange={(e) => setFilters({...filters, seller: e.target.value})}
-                                    >
-                                        <option value=''>{t('search.any')}</option>
-                                        {sellers.map((item) => (
-                                            <option 
-                                                key={item.id}
-                                                value={item.id}
-                                            >{item.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>                
+                {!subList && (
 
-                            <div className="d-flex mt-4">
-                                <div>
-                                    <button 
-                                        className="btn btn-primary btn-sm"
-                                    ><AppIcons.Search/> {t('search.action.search')}</button>
+                    <div className='col-md-2'>
+                        <div className='content-right'>
+                            <small>
+                                <b>
+                                    <AppIcons.Search/> {t('container.search.title')}
+                                </b>
+                            </small>
+                            <form onSubmit={handleSearch}>
+                                <div className="row mt-2">
+                                    <label className="col-form-label">
+                                        <small>{t('container.search.content')}</small>
+                                    </label>
+                                    <div>
+                                        <input 
+                                            className="form-control form-control-sm"
+                                            id="searchContent" 
+                                            value={filters.content || ""}
+                                            onChange={(e) => setFilters({...filters, content: e.target.value})}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="ms-auto">
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-sm btn-outline-primary " 
-                                        onClick={handleClear}
-                                        title={t('search.action.clear')}
-                                    >
-                                        <AppIcons.ClearFields />
-                                    </button>                    
-                                </div>
-                            </div>
+                                <div className="row mt-2">
+                                    <label className="col-form-label">
+                                        <small>{t('container.search.seller')}</small>
+                                    </label>
+                                    <div>
+                                        <select 
+                                            className="form-select form-select-sm"
+                                            id="searchSeller"
+                                            value={filters.seller || ""}
+                                            onChange={(e) => setFilters({...filters, seller: e.target.value})}
+                                        >
+                                            <option value=''>{t('search.any')}</option>
+                                            {sellers.map((item) => (
+                                                <option 
+                                                    key={item.id}
+                                                    value={item.id}
+                                                >{item.name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>                
 
-                        </form>
+                                <div className="d-flex mt-4">
+                                    <div>
+                                        <button 
+                                            className="btn btn-primary btn-sm"
+                                        ><AppIcons.Search/> {t('search.action.search')}</button>
+                                    </div>
+                                    <div className="ms-auto">
+                                        <button 
+                                            type="button" 
+                                            className="btn btn-sm btn-outline-primary " 
+                                            onClick={handleClear}
+                                            title={t('search.action.clear')}
+                                        >
+                                            <AppIcons.ClearFields />
+                                        </button>                    
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
-                </div>
+                 
+                )}
+
             </div>
         </>
     );

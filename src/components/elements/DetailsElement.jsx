@@ -33,17 +33,21 @@ const DetailsElement = ({ data }) => {
                             <td className="text-muted fw-bold col-md-3">
                                 {item.label}
                             </td>
-                            {(item.type === 'website' || item.type === 'email') ? (
+                            {(item.type === 'link' || item.type === 'email' || item.type === 'mapLink') ? (
                                 <td 
                                     className="text-primary"
                                     style={{ cursor: 'pointer', }}
                                     onClick={(e) => handleClick(e, item)}
                                 >
-                                    {item.type === 'website' ? (
+                                    {item.type === 'link' ? (
                                         <AppIcons.Website />
-                                    ) : (
+                                    ) : item.type === 'email' ? (
                                         <AppIcons.Email />
-                                    )}
+                                    ) : item.type === 'mapLink' ? (
+                                        <AppIcons.Map />
+                                    ) : (
+                                        <></>
+                                    )}                                    
                                     &nbsp;{item.value}
                                 </td>
                             ) : (

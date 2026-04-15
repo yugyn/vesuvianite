@@ -1,5 +1,14 @@
-// src/components/PageHeader.jsx
-const PageHeaderElement = ({ title, name, subTitle, children }) => {
+import { useTranslation } from 'react-i18next';
+
+const PageHeaderElement = ({ 
+  title, 
+  name, 
+  subTitle, 
+  children, 
+  deleted 
+}) => {
+
+  const { t } = useTranslation();
 
   return (
     <div className="d-flex justify-content-between align-items-center mb-2">
@@ -9,7 +18,11 @@ const PageHeaderElement = ({ title, name, subTitle, children }) => {
       ) : name ? (
         <>
           <div>
-            <small>{title}</small>
+            {deleted ? (
+              <span className="badge text-bg-danger">{title}{t('global.deleted.header')}</span>
+            ) : (
+              <small>{title}</small>
+            )}
             <h1>{name}</h1>
           </div>
         </>

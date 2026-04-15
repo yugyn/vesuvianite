@@ -10,12 +10,12 @@ const ContainerFormView = () => {
     const { t } = useTranslation();
 
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { id, sellerId } = useParams();
     const [element, setElement] = useState({
         name: '', 
         dimensions: '', 
         description: '', 
-        seller_id: '', 
+        seller_id: sellerId, 
     });
     const [sellers, setSellers] = useState(null);
     const [error, setError] = useState(null);

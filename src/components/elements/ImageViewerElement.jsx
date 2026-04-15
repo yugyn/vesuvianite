@@ -41,13 +41,13 @@ const ImageViewerElement = ({
     };
 
     const openExternal = async () => {
-        const absolutePath = await window.electronAPI.getPathImage(`${elementName}/${currentImg.filename}`);
+        const absolutePath = await window.electronAPI.getPathImage(`${elementName}/${elementId}/${currentImg.filename}`);
         window.electronAPI.openFile(absolutePath);
     };    
 
     const handleDownload = async () => {
 
-        const absolutePath = await window.electronAPI.getPathImage(`${elementName}/${currentImg.filename}`);
+        const absolutePath = await window.electronAPI.getPathImage(`${elementName}/${elementId}/${currentImg.filename}`);
         const result = await window.electronAPI.downloadFile({
             sourcePath: absolutePath,
             fileName: currentImg.filename
@@ -139,7 +139,7 @@ const ImageViewerElement = ({
                                 overflow: 'visible'
                             }}>
                                 <ImageElement 
-                                    filePath={`${elementName}/${currentImg.filename}`} 
+                                    filePath={`${elementName}/${elementId}/${currentImg.filename}`} 
                                     style={{ 
                                         maxWidth: '100%',
                                         maxHeight: '100%',

@@ -7,7 +7,7 @@ import NoImageFallback from '../../images/1.jpg';
 import ImageGridElement from '../elements/ImageGridElement';
 import ImageViewerElement from '../elements/ImageViewerElement';
 
-const ImageList = ({ elementName, elementId, small, noAdd }) => {
+const ImageList = ({ elementName, elementId, small, deleted }) => {
 
     const { t } = useTranslation();
 
@@ -39,7 +39,7 @@ const ImageList = ({ elementName, elementId, small, noAdd }) => {
         const confirm = window.confirm("Sei sicuro di voler eliminare questa immagine?");
         if (!confirm) return;
 
-        const result = await window.electronAPI.deleteImage({ id: currentImg.id, pathFile: currentImg.filename, deleted: currentImg.deleted });
+        const result = await window.electronAPI.deleteImage({id: currentImg.id});
         if(result.success) {
             setElements(prev => prev.filter(item => item.id !== currentImg.id));
         } else {
@@ -134,7 +134,7 @@ const ImageList = ({ elementName, elementId, small, noAdd }) => {
                     </small>
 
                     <div className="d-flex gap-2">
-                        {!noAdd && (
+                        {!deleted && (
                             <button 
                                 className="btn btn-outline-primary btn-xs" 
                                 onClick={handleUpload}
@@ -165,9 +165,9 @@ const ImageList = ({ elementName, elementId, small, noAdd }) => {
             )}
             
             <div 
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
+                onDragOver={!deleted ? handleDragOver : undefined}
+                onDragLeave={!deleted ? handleDragLeave : undefined}
+                onDrop={!deleted ? handleDrop : undefined}
                 className={`container-fluid p-0 ${isDragging ? 'bg-primary bg-opacity-10' : ''}`}
                 style={{ transition: 'background 0.3s' }}
             >
@@ -176,8 +176,13 @@ const ImageList = ({ elementName, elementId, small, noAdd }) => {
                     images={elements} 
                     elementName={elementName} 
                     elementId={elementId} 
-                    onImageClick={(index) => setSelectedIndex(index)}
-                    small={small} 
+                    onImageClick={(index) => {
+                        if (!deleted) {
+                            setSelectedIndex(index);
+                        }
+                    }}                    
+                    small={small}
+                    deleted={deleted} 
                 />
 
                 {currentImg && (

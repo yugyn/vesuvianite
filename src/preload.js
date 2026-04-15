@@ -2,31 +2,61 @@ import { contextBridge, ipcRenderer, webUtils} from 'electron';
 
 const api = {
 
+    // File system
+    getFilePath: (file) => webUtils.getPathForFile(file),
+    getPathImage: (fileName) => ipcRenderer.invoke('path:image', fileName),
+    uploadImages: (params) => ipcRenderer.invoke('image:upload-multiple', params),
+    saveImages: (params) => ipcRenderer.invoke('image:save-multiple', params),
+    deleteFile: (params) => ipcRenderer.invoke('file:delete', params),
+    deleteFolder: (params) => ipcRenderer.invoke('folder:delete', params),
+    openFile: (fullPath) => ipcRenderer.invoke('file:open', fullPath),
+    downloadFile: (params) => ipcRenderer.invoke('file:download', params),
+
+    // Link
+    openLink: (url) => ipcRenderer.send('link:open', url),
+
+    // Trash
+    getAllTrashes: (element) => ipcRenderer.invoke('trash:getAll', element),
+    getAllTrashesCount: () => ipcRenderer.invoke('trash:getAllCounts'),
+
+    // Image
+    getImage: (id) => ipcRenderer.invoke('image:get', id),
+    getAllImages: (params) => ipcRenderer.invoke('image:getAll', params),
+    restoreImage: (id) => ipcRenderer.invoke('image:restore', id),
+    deleteImage: (params) => ipcRenderer.invoke('image:delete', params),
+    deleteAllImages: (params) => ipcRenderer.invoke('image:deleteAll', params),
+    updateImageOrder: (orderedIds) => ipcRenderer.invoke('image:update-orders', orderedIds),
+
+    // Annotation
     getAnnotation: (id) => ipcRenderer.invoke('annotation:get', id),
     getAllAnnotations: (params) => ipcRenderer.invoke('annotation:getAll', params),
     getAllAnnotationsByElement: (params) => ipcRenderer.invoke('annotation:getAllByElement', params),
     saveAnnotation: (params) => ipcRenderer.invoke('annotation:save', params),
-    deleteAnnotation: (id) => ipcRenderer.invoke('annotation:delete', id),
+    deleteAnnotation: (params) => ipcRenderer.invoke('annotation:delete', params),
+    deleteAllAnnotations: (params) => ipcRenderer.invoke('annotation:deleteAll', params),
 
-    getAllImages: (params) => ipcRenderer.invoke('image:getAll', params),
+    /*
+    **********************************************************************
+    */
 
-    getAllTrashes: (element) => ipcRenderer.invoke('trash:getAll', element),
-    getAllTrashesCount: () => ipcRenderer.invoke('trash:getAllCounts'),
+    // Seller
+    getSeller: (id) => ipcRenderer.invoke('seller:get', id),
+    getAllSellers: (params) => ipcRenderer.invoke('seller:getAll', params),
+    saveSeller: (params) => ipcRenderer.invoke('seller:save', params),
+    deleteSeller: (id) => ipcRenderer.invoke('seller:delete', id),
+    restoreSeller: (id) => ipcRenderer.invoke('seller:restore', id),
+
+
+
+
+
+
+
 
     openAbout: () => ipcRenderer.send('window:about'),
     openWhatis: () => ipcRenderer.send('window:whatis'),
 
-    getFilePath: (file) => webUtils.getPathForFile(file),
-    uploadImages: (params) => ipcRenderer.invoke('image:upload-multiple', params),
-    saveImages: (params) => ipcRenderer.invoke('image:save-multiple', params),
-    deleteImage: (params) => ipcRenderer.invoke('image:delete', params),
-    getPathImage: (fileName) => ipcRenderer.invoke('path:image', fileName),
-    updateImageOrder: (orderedIds) => ipcRenderer.invoke('image:update-orders', orderedIds),
 
-    openFile: (fullPath) => ipcRenderer.invoke('file:open', fullPath),
-    downloadFile: (params) => ipcRenderer.invoke('file:download', params),
-
-    openLink: (url) => ipcRenderer.send('link:open', url),
 
     addTask: (title) => ipcRenderer.invoke('tasks:add', title),
     deleteTask: (id) => ipcRenderer.invoke('tasks:delete', id),
@@ -45,10 +75,6 @@ const api = {
     saveMineral: (params) => ipcRenderer.invoke('mineral:save', params),
     deleteMineral: (id) => ipcRenderer.invoke('mineral:delete', id),
 
-    getSeller: (id) => ipcRenderer.invoke('seller:get', id),
-    getAllSellers: (params) => ipcRenderer.invoke('seller:getAll', params),
-    saveSeller: (params) => ipcRenderer.invoke('seller:save', params),
-    deleteSeller: (id) => ipcRenderer.invoke('seller:delete', id),
 
     getContainer: (id) => ipcRenderer.invoke('container:get', id),
     getAllContainers: (params) => ipcRenderer.invoke('container:getAll', params),

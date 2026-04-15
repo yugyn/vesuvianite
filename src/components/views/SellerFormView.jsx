@@ -23,6 +23,7 @@ const SellerFormView = () => {
         postalCode: '', 
         state: '', 
         country: '', 
+        mapLink: '', 
     });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -71,6 +72,7 @@ const SellerFormView = () => {
         const postalCode = document.getElementById('postalCode').value;
         const state = document.getElementById('state').value;
         const country = document.getElementById('country').value;
+        const mapLink = document.getElementById('mapLink').value;
 
         const params = {
             id: (id ? id : 0),
@@ -85,6 +87,7 @@ const SellerFormView = () => {
             postalCode: postalCode, 
             state: state, 
             country: country, 
+            mapLink: mapLink, 
         }
 
         const result = await window.electronAPI.saveSeller(params);
@@ -269,6 +272,18 @@ const SellerFormView = () => {
                             className="form-control"
                             id="country" 
                             defaultValue={element.country}
+                        />
+                    </div>
+                </div>                
+                <div className="mb-3 row">
+                    <label className="col-sm-2 col-form-label">
+                        {t('seller.mapLink')}
+                    </label>
+                    <div className="col-sm-4">
+                        <input 
+                            className="form-control"
+                            id="mapLink" 
+                            defaultValue={element.mapLink}
                         />
                     </div>
                 </div>                

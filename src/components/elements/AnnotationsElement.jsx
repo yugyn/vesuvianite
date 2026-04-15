@@ -9,7 +9,7 @@ import PageHeader from '../elements/PageHeaderElement';
 import ImageList from '../lists/ImageList';
 import { formatDate} from '../../utils/utils'
 
-const AnnotationsElement = ({elementName, elementId, noAdd}) => {
+const AnnotationsElement = ({elementName, elementId, deleted}) => {
 
     const { t } = useTranslation();
 
@@ -57,7 +57,7 @@ const AnnotationsElement = ({elementName, elementId, noAdd}) => {
 
         setShowModal(false);
 
-        const result = await window.electronAPI.deleteAnnotation(element.id);
+        const result = await window.electronAPI.deleteAnnotation({id: element.id});
         if(result.success) {
             loadAll();
         } else {
@@ -122,7 +122,7 @@ const AnnotationsElement = ({elementName, elementId, noAdd}) => {
                 </small>
 
                 <div className="d-flex gap-2">
-                    {!noAdd && (
+                    {!deleted && (
                         <button 
                             className={`btn btn-xs btn-outline-primary`}
                             onClick={() => handleAdd()}
@@ -139,8 +139,12 @@ const AnnotationsElement = ({elementName, elementId, noAdd}) => {
                 <div 
                     className={`note note-${item.importance}`}
                     key={item.id} 
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleEdit(item)}
+                    style={{ cursor: deleted ? 'default' : 'pointer' }}
+                    onClick={() => {
+                        if (!deleted) {
+                            handleEdit(item);
+                        }
+                    }}                    
                 >
                     <div>
                         <small>

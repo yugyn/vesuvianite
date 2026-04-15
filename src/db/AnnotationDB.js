@@ -121,19 +121,18 @@ class AnnotationDB {
 
     }
 
-    delete(id) {
-        console.log("qui...");
+    delete(params) {
 
         try {
 
-            const element = this.get(id);
+            const element = this.get(params.id);
             if(element) {
 
-                if(element.deleted) {
+                if(element.deleted || params.physical) {
 
                     const query = `DELETE FROM ${this.constructor.TB_NAME} WHERE id = ?`;
                     const stmt = this.db.prepare(query);
-                    stmt.run(id);
+                    stmt.run(params.id);
                     return {
                         success: true,
                     }
@@ -147,14 +146,63 @@ class AnnotationDB {
                         WHERE id = ?
                     `;
                     const stmt = this.db.prepare(query);
-                    stmt.run(id);    
+                    stmt.run(params.id);    
                     return {
                         success: true,
-                        id: id,
+                        id: params.id,
                     }
 
                 }
 
+            }
+
+        } catch(err) {
+            return {
+                error: err.message,
+            }
+            
+        }
+
+    }
+
+    deleteAll(params) {
+
+        try {
+
+            const query = `
+                DELETE FROM ${this.constructor.TB_NAME} 
+                WHERE element_name = ? and element_id = ?
+            `;
+            const stmt = this.db.prepare(query);
+            stmt.run(params.elementName, params.elementId);
+            return {
+                success: true,
+            }
+
+        } catch(err) {
+            return {
+                error: err.message,
+            }
+            
+        }
+        
+    }
+
+    restore(id) {
+
+        try {
+
+            const query = `
+                UPDATE ${this.constructor.TB_NAME}
+                set deleted = 0
+                , date_delete = null
+                WHERE id = ?
+            `;
+            const stmt = this.db.prepare(query);
+            stmt.run(id);    
+            return {
+                success: true,
+                id: id,
             }
 
         } catch(err) {

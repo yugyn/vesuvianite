@@ -3,6 +3,8 @@
   "seller": {
 
     "message.saved": "Venditore salvato con successo.",
+    "message.deleted": "Venditore eliminato con successo.",
+    "message.restored": "Venditore ripristinato con successo.",
 
     "label": "Venditore",
     "name": "Nome",
@@ -14,6 +16,7 @@
     "postalCode": "CAP",
     "state": "Provincia",
     "country": "Paese",
+    "mapLink": "Link mappa",
     "fullAddress": "Indirizzo completo",
     
     "list": {
@@ -31,8 +34,8 @@
       "edit": "Modifica venditore",
       "delete": "Elimina venditore",
       "back": {
-        "container": "Torna a venditore",
-        "containers": "Torna alla lista venditori"
+        "seller": "Torna a venditore",
+        "sellers": "Torna alla lista venditori"
       }
     },
 

@@ -12,7 +12,7 @@ class ContainerDB {
 
         const query = `
             SELECT c.*, s.id as sId, s.name as sName FROM ${this.constructor.TB_NAME} AS c 
-            LEFT JOIN ${SellerDB.TB_NAME} AS s ON c.seller_id = s.id 
+            LEFT JOIN ${SellerDB.TB_NAME} AS s ON c.seller_id = s.id and not s.deleted = 1 
             WHERE c.id = ?
         `;
 
@@ -27,19 +27,13 @@ class ContainerDB {
         const filters = Array();
         let query = `
             SELECT c.*, s.id as sId, s.name as sName FROM ${this.constructor.TB_NAME} AS c 
-            LEFT JOIN ${SellerDB.TB_NAME} AS s ON c.seller_id = s.id 
-            WHERE true 
+            LEFT JOIN ${SellerDB.TB_NAME} AS s ON c.seller_id = s.id ${params.includeSellerDeleted ? ' ' : 'and not s.deleted = 1 '} 
+            WHERE not c.deleted = 1  
         `;
 
         if(params.sellerId !== null && params.sellerId !== undefined && params.sellerId !== '') {
             query += ' AND s.id = ?';
             filters.push(params.sellerId);
-        }
-
-        if(params.deleted !== null && params.deleted !== '') {
-            query += ' AND c.deleted = 0';
-        } else {
-            query += ' AND c.deleted = 1';
         }
 
         if(params.content !== null && params.content !== undefined && params.content !== '') {

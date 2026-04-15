@@ -8,6 +8,7 @@ const ImageGridElement = ({
     images,
     onImageClick,
     small,
+    deleted,
 }) => {
 
     const [localImages, setLocalImages] = useState(images);
@@ -58,24 +59,41 @@ const ImageGridElement = ({
     
                 <div key={item.id} className={small ? "col-12" : "col-6 col-sm-4 col-md-3 col-lg-2"}>
                     <div className="card h-100 shadow-sm">
-                        <div 
-                            key={item.id}
-                            className="ratio ratio-4x3 pointer"
-                            onClick={() => onImageClick(index)}
-                            draggable 
-                            onDragStart={(e) => {
-                                e.dataTransfer.setData("type", "internal");
-                                setDraggedIndex(index);
-                            }}
-                            onDragOver={onDragOver}
-                            onDrop={(e) => onDrop(e, index)}                       
-                        >
-                            <ImageElement 
-                                filePath={`${elementName}/${item.filename}`} 
-                                className="card-img-top rounded"
-                                style={{ objectFit: 'cover' }}
-                            />
-                        </div>
+                        {deleted ? (
+
+                            <div 
+                                key={item.id}
+                                className="ratio ratio-4x3"
+                            >
+                                <ImageElement 
+                                    filePath={`${elementName}/${elementId}/${item.filename}`} 
+                                    className="card-img-top rounded"
+                                    style={{ objectFit: 'cover' }}
+                                />
+                            </div>
+
+                        ) : (
+                            
+                            <div 
+                                key={item.id}
+                                className="ratio ratio-4x3 pointer"
+                                onClick={() => onImageClick(index)}
+                                draggable 
+                                onDragStart={(e) => {
+                                    e.dataTransfer.setData("type", "internal");
+                                    setDraggedIndex(index);
+                                }}
+                                onDragOver={onDragOver}
+                                onDrop={(e) => onDrop(e, index)}                       
+                            >
+                                <ImageElement 
+                                    filePath={`${elementName}/${elementId}/${item.filename}`} 
+                                    className="card-img-top rounded"
+                                    style={{ objectFit: 'cover' }}
+                                />
+                            </div>
+
+                        )}
                     </div>
                 </div>
 

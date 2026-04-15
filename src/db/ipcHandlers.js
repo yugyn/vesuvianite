@@ -11,14 +11,13 @@ import AnnotationDB from "./AnnotationDB";
 
 export default function ipcHandlers(db) {
 
-    const trashDB = new TrashDB(db.db);
     const mineralClassDB = new MineralClassDB(db.db);
     const crystalSystemDB = new CrystalSystemDB(db.db);
     const mineralDB = new MineralDB(db.db);
-    const sellerDB = new SellerDB(db.db);
     const containerDB = new ContainerDB(db.db);
-    const imageDB = new ImageDB(db.db);
-    const annotationDB = new AnnotationDB(db.db);
+
+    // Trash
+    const trashDB = new TrashDB(db.db);
 
     ipcMain.handle('trash:getAll', (_, element) => {
         return trashDB.getAll(element);
@@ -26,6 +25,81 @@ export default function ipcHandlers(db) {
     ipcMain.handle('trash:getAllCounts', () => {
         return trashDB.getAllCounts();
     });
+
+
+
+    // Image
+    const imageDB = new ImageDB(db.db);
+
+    ipcMain.handle('image:get', (_, id) => {
+        return imageDB.get(id);
+    });
+    ipcMain.handle('image:getAll', (_, params) => {
+        return imageDB.getAll(params);
+    });
+    ipcMain.handle('image:delete', (_, params) => {
+        return imageDB.delete(params);
+    });
+    ipcMain.handle('image:deleteAll', (_, params) => {
+        return imageDB.deleteAll(params);
+    });
+    ipcMain.handle('image:restore', (_, id) => {
+        return imageDB.restore(id);
+    });
+    ipcMain.handle('image:update-orders', (_, orderedIds) => {
+        return imageDB.updateOrders(orderedIds);
+    });
+
+
+
+    // Annotation
+    const annotationDB = new AnnotationDB(db.db);
+
+    ipcMain.handle('annotation:getAll', (_, params) => {
+        return annotationDB.getAll(params);
+    });
+    ipcMain.handle('annotation:get', (_, id) => {
+        return annotationDB.get(id);
+    });
+    ipcMain.handle('annotation:getAllByElement', (_, params) => {
+        return annotationDB.getAllByElement(_, params);
+    });
+    ipcMain.handle('annotation:save', (_, params) => {
+        return annotationDB.save(params);
+    });
+    ipcMain.handle('annotation:delete', (_, params) => {
+        return annotationDB.delete(params);
+    });
+    ipcMain.handle('annotation:deleteAll', (_, params) => {
+        return annotationDB.deleteAll(params);
+    });
+
+
+
+    // Seller
+    const sellerDB = new SellerDB(db.db);
+
+    ipcMain.handle('seller:getAll', (_, params) => {
+        return sellerDB.getAll(params);
+    });
+    ipcMain.handle('seller:get', (_, id) => {
+        return sellerDB.get(id);
+    });
+    ipcMain.handle('seller:save', (_, params) => {
+        return sellerDB.save(params);
+    });
+    ipcMain.handle('seller:delete', (_, id) => {
+        return sellerDB.delete(id);
+    });
+   ipcMain.handle('seller:restore', (_, id) => {
+        return sellerDB.restore(id);
+    });
+
+
+
+
+
+
 
 
 
@@ -58,20 +132,10 @@ export default function ipcHandlers(db) {
     ipcMain.handle('mineral:delete', (_, id) => {
         return mineralDB.delete(id);
     });
-    ipcMain.handle('seller:save', (_, params) => {
-        return sellerDB.save(params);
-    });
-    ipcMain.handle('seller:delete', (_, id) => {
-        return sellerDB.delete(id);
-    });
 
 
-    ipcMain.handle('seller:getAll', (_, params) => {
-        return sellerDB.getAll(params);
-    });
-    ipcMain.handle('seller:get', (_, id) => {
-        return sellerDB.get(id);
-    });
+
+
 
     ipcMain.handle('container:getAll', (_, params) => {
         return containerDB.getAll(params);
@@ -93,28 +157,8 @@ export default function ipcHandlers(db) {
     });
 
 
-    ipcMain.handle('image:getAll', (_, params) => {
-        return imageDB.getAll(params);
-    });
-    ipcMain.handle('image:update-orders', (_, orderedIds) => {
-        return imageDB.updateOrders(orderedIds);
-    });
 
-    ipcMain.handle('annotation:getAll', (_, params) => {
-        return annotationDB.getAll(params);
-    });
-    ipcMain.handle('annotation:get', (_, id) => {
-        return annotationDB.get(id);
-    });
-    ipcMain.handle('annotation:getAllByElement', (_, params) => {
-        return annotationDB.getAllByElement(_, params);
-    });
-    ipcMain.handle('annotation:save', (_, params) => {
-        return annotationDB.save(params);
-    });
-    ipcMain.handle('annotation:delete', (_, id) => {
-        return annotationDB.delete(id);
-    });
+
 
 
 }

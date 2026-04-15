@@ -25,6 +25,7 @@ import SellerFormView from './components/views/SellerFormView';
 import ContainerListView from './components/views/ContainerListView';
 import ContainerView from './components/views/ContainerView';
 import ContainerFormView from './components/views/ContainerFormView';
+import ImageView from './components/views/ImageView';
 
 import Layout from './components/Layout';
 
@@ -40,6 +41,7 @@ class App extends Component {
             <Route path="/" element={<Home />} />
             <Route path="/trashes" element={<TrashListView />} />
             <Route path="/trash/:element" element={<TrashView />} />
+            <Route path="/image/:id" element={<ImageView />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/todo" element={<ToDo />} />
             <Route path="/mineralClasses" element={<MineralClasses />} />
@@ -53,7 +55,7 @@ class App extends Component {
             <Route path="/sellerForm/:id" element={<SellerFormView />} />
             <Route path="/containers" element={<ContainerListView />} />
             <Route path="/container/:id" element={<ContainerView />} />
-            <Route path="/containerForm/:id" element={<ContainerFormView />} />
+            <Route path="/containerForm/:id?/:sellerId?" element={<ContainerFormView />} />
           </Route>          
         </Routes>
       </HashRouter>

@@ -25,7 +25,7 @@ class SellerDB {
         const filters = Array();
         let query = `
             SELECT * FROM ${this.constructor.TB_NAME} 
-            WHERE deleted = 0 
+            WHERE not deleted = 1 
         `;
 
         if(params) {
@@ -85,8 +85,9 @@ class SellerDB {
                     , postal_code
                     , state
                     , country
+                    , map_link
                 ) 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
             const values = Array();
             values.push(params.name);
@@ -100,6 +101,7 @@ class SellerDB {
             values.push(params.postalCode);
             values.push(params.state);
             values.push(params.country);
+            values.push(params.mapLink);
 
             const stmt = this.db.prepare(query);
             const info = stmt.run(values);
@@ -133,6 +135,7 @@ class SellerDB {
                 , postal_code = ?
                 , state = ?
                 , country = ?
+                , map_link = ?
                 , date_update = CURRENT_TIMESTAMP
                 WHERE id = ?
             `;
@@ -148,6 +151,7 @@ class SellerDB {
             values.push(params.postalCode);
             values.push(params.state);
             values.push(params.country);
+            values.push(params.mapLink);
             values.push(params.id);
 
             const stmt = this.db.prepare(query);
@@ -179,6 +183,7 @@ class SellerDB {
                     stmt.run(id);
                     return {
                         success: true,
+                        physical: true
                     }
 
                 } else {
@@ -198,6 +203,33 @@ class SellerDB {
 
                 }
 
+            }
+
+        } catch(err) {
+            return {
+                error: err.message,
+            }
+            
+        }
+
+    }
+
+
+    restore(id) {
+
+        try {
+
+            const query = `
+                UPDATE ${this.constructor.TB_NAME}
+                set deleted = 0
+                , date_delete = null
+                WHERE id = ?
+            `;
+            const stmt = this.db.prepare(query);
+            stmt.run(id);    
+            return {
+                success: true,
+                id: id,
             }
 
         } catch(err) {

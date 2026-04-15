@@ -10,7 +10,7 @@ class ImageDB {
     get(id) {
 
         const query = `
-            SELECT * FROM image 
+            SELECT * FROM ${this.constructor.TB_NAME} 
             WHERE id = ?
         `;
 
@@ -24,7 +24,7 @@ class ImageDB {
 
         const filters = Array();
         let query = `
-            SELECT * FROM image 
+            SELECT * FROM ${this.constructor.TB_NAME} 
             WHERE deleted = 0  
         `;
 
@@ -61,7 +61,7 @@ class ImageDB {
         try {
 
             const query = `
-                INSERT INTO image(element_name, element_id, filename, sort) 
+                INSERT INTO ${this.constructor.TB_NAME}(element_name, element_id, filename, sort) 
                 VALUES(?, ?, ?, ?)
             `;
             const values = Array();
@@ -90,7 +90,7 @@ class ImageDB {
         try {
 
             const query = `
-                UPDATE image
+                UPDATE ${this.constructor.TB_NAME}
                 set element_name = ?
                 , element_id = ?
                 , filename = ?
@@ -118,18 +118,18 @@ class ImageDB {
 
     }
 
-    delete(id) {
+    delete(params) {
 
         try {
 
-            const element = this.get(id);
+            const element = this.get(params.id);
             if(element) {
 
-                if(element.deleted) {
+                if(element.deleted || params.physical) {
 
-                    const query = `DELETE FROM image WHERE id = ?`;
+                    const query = `DELETE FROM ${this.constructor.TB_NAME} WHERE id = ?`;
                     const stmt = this.db.prepare(query);
-                    stmt.run(id);
+                    stmt.run(params.id);
                     return {
                         success: true,
                     }
@@ -137,16 +137,16 @@ class ImageDB {
                 } else {
 
                     const query = `
-                        UPDATE image
+                        UPDATE ${this.constructor.TB_NAME}
                         set deleted = 1
                         , date_delete = CURRENT_TIMESTAMP
                         WHERE id = ?
                     `;
                     const stmt = this.db.prepare(query);
-                    stmt.run(id);    
+                    stmt.run(params.id);    
                     return {
                         success: true,
-                        id: id,
+                        id: params.id,
                     }
 
                 }
@@ -162,11 +162,56 @@ class ImageDB {
 
     }
 
+    deleteAll(params) {
+
+        try {
+
+            const elements = this.getAll(params);
+            elements.forEach((item) => {
+                this.delete({id: item.id, physical: true});
+            });
+            return elements;
+
+        } catch(err) {
+            return {
+                error: err.message,
+            }
+            
+        }
+        
+    }
+
+    restore(id) {
+
+        try {
+
+            const query = `
+                UPDATE ${this.constructor.TB_NAME}
+                set deleted = 0
+                , date_delete = null
+                WHERE id = ?
+            `;
+            const stmt = this.db.prepare(query);
+            stmt.run(id);    
+            return {
+                success: true,
+                id: id,
+            }
+
+        } catch(err) {
+            return {
+                error: err.message,
+            }
+            
+        }
+
+    }
+    
     updateOrders(orderedIds) {
 
         try {
 
-            const query = "UPDATE image SET sort = ? WHERE id = ?";
+            const query = `UPDATE ${this.constructor.TB_NAME} SET sort = ? WHERE id = ?`;
         
             for(let i = 0; i < orderedIds.length; i++) {
 
@@ -196,7 +241,7 @@ class ImageDB {
 
         const query = `
             SELECT COALESCE(MAX(sort), -1) as lastSort 
-            FROM image 
+            FROM ${this.constructor.TB_NAME} 
             WHERE element_name = ? and element_id = ?
         `;
 

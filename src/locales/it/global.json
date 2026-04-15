@@ -1,7 +1,11 @@
 {
 
+  "global.deleted.header": " - Elemento eliminato, è possibile ripristinarlo o eliminarlo definitivamente.",
+
   "global.shortDescription": "Descrizione breve",
   "global.description": "Descrizione",
+
+  "global.message.error": "Si è verificato un errore durante l'operazione",
 
   "action": {
       "save": "Salva",
@@ -28,6 +32,9 @@
       "search": "Cerca",
       "clear": "Pulisci campi"
     }
-  }
+  },
+
+  "confirm.delete": "Confermi l'eliminazione?",
+  "confirm.restore": "Confermi il ripristino?"
 
 }
