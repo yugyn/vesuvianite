@@ -1,22 +1,22 @@
-import ImageElement from '../elements/ImageElement';
-import NoImageFallback from '../../images/1.jpg';
+import { AppIcons } from '../../utils/iconUtils';
+import MediaElement from '../elements/MediaElement';
 import { useEffect, useState } from 'react';
 
-const ImageGridElement = ({ 
+const MediaGridElement = ({ 
     elementName, 
     elementId, 
-    images,
-    onImageClick,
+    medias,
+    onMediaClick,
     small,
     deleted,
 }) => {
 
-    const [localImages, setLocalImages] = useState(images);
+    const [localMedias, setLocalMedias] = useState(medias);
     const [draggedIndex, setDraggedIndex] = useState(null);
 
     useEffect(() => {
-        setLocalImages(images);
-    }, [images]);
+        setLocalMedias(medias);
+    }, [medias]);
 
     const onDragOver = (e) => {
 
@@ -42,20 +42,20 @@ const ImageGridElement = ({
 
         if (draggedIndex === null) return;
 
-        const updated = [...localImages];
+        const updated = [...localMedias];
         const item = updated.splice(draggedIndex, 1)[0];
         updated.splice(index, 0, item);
 
-        setLocalImages(updated);
+        setLocalMedias(updated);
 
-        window.electronAPI.updateImageOrder(updated.map(img => img.id));
+        window.electronAPI.updateMediaOrder(updated.map(img => img.id));
 
     };
 
     return (
         <div className="row g-3">
 
-            {localImages.map((item, index) => (
+            {localMedias.map((item, index) => (
     
                 <div key={item.id} className={small ? "col-12" : "col-6 col-sm-4 col-md-3 col-lg-2"}>
                     <div className="card h-100 shadow-sm">
@@ -65,8 +65,10 @@ const ImageGridElement = ({
                                 key={item.id}
                                 className="ratio ratio-4x3"
                             >
-                                <ImageElement 
-                                    filePath={`${elementName}/${elementId}/${item.filename}`} 
+                                <MediaElement 
+                                    elementName={elementName}
+                                    elementId={elementId}
+                                    item={item} 
                                     className="card-img-top rounded"
                                     style={{ objectFit: 'cover' }}
                                 />
@@ -76,8 +78,8 @@ const ImageGridElement = ({
                             
                             <div 
                                 key={item.id}
-                                className="ratio ratio-4x3 pointer"
-                                onClick={() => onImageClick(index)}
+                                className={`ratio ratio-4x3 pointer`}
+                                onClick={() => onMediaClick(index)}
                                 draggable 
                                 onDragStart={(e) => {
                                     e.dataTransfer.setData("type", "internal");
@@ -86,11 +88,18 @@ const ImageGridElement = ({
                                 onDragOver={onDragOver}
                                 onDrop={(e) => onDrop(e, index)}                       
                             >
-                                <ImageElement 
-                                    filePath={`${elementName}/${elementId}/${item.filename}`} 
+                                <MediaElement 
+                                    elementName={elementName}
+                                    elementId={elementId}
+                                    item={item} 
                                     className="card-img-top rounded"
                                     style={{ objectFit: 'cover' }}
                                 />
+                                {item.type === 'video' && (
+                                    <div className="play-overlay">
+                                        <AppIcons.Play />
+                                    </div>
+                                )}
                             </div>
 
                         )}
@@ -104,4 +113,4 @@ const ImageGridElement = ({
     );
 };
 
-export default ImageGridElement;
+export default MediaGridElement;

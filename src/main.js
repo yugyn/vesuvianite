@@ -3,13 +3,13 @@ import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import AppDB from './db/AppDB';
 import ipcHandlers from './db/ipcHandlers';
-import ImageDB from './db/ImageDB';
+import MediaDB from './db/MediaDB';
 
-const PATH_IMAGE = path.join(app.getPath('userData'), 'image/');  
+const PATH_MEDIA = path.join(app.getPath('userData'), 'media/');  
 
-ipcMain.handle('path:image', (event, fileName) => {
+ipcMain.handle('path:media', (event, fileName) => {
 
-      let filePath = path.join(PATH_IMAGE, fileName);
+      let filePath = path.join(PATH_MEDIA, fileName);
 
   		if (process.platform === 'win32') {
 
@@ -78,7 +78,7 @@ app.whenReady().then(() => {
     	let fileName = request.url.replace('safe-protocol://', '');
       fileName = decodeURIComponent(fileName);
       fileName = fileName.replace(/\/$/, "").replace(/^\//, "");
-      let filePath = path.join(PATH_IMAGE, fileName);
+      let filePath = path.join(PATH_MEDIA, fileName);
 
   		if (process.platform === 'win32') {
 
@@ -198,16 +198,30 @@ ipcMain.on('window:whatis', () => {
 
 
 
-ipcMain.handle('image:upload-multiple', async (event, params) => {
+ipcMain.handle('media:upload-multiple', async (event, params) => {
 
+/*  
 	const { canceled, filePaths } = await dialog.showOpenDialog({
     	properties: ['openFile', 'multiSelections'],
     	filters: [{ name: 'Immagini', extensions: ['jpg', 'png', 'gif'] }]
-  	});
+  });
+*/
 
-  	if (canceled) return;
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openFile', 'multiSelections'],
+    filters: [
+        { 
+            name: 'Media (Immagini e Video)', 
+            extensions: ['jpg', 'png', 'gif', 'webp', 'mp4', 'webm', 'mov'] 
+        },
+        { name: 'Immagini', extensions: ['jpg', 'png', 'gif', 'webp'] },
+        { name: 'Video', extensions: ['mp4', 'webm', 'mov'] }
+    ]
+  });
 
-    return filePaths;
+  if (canceled) return;
+
+  return filePaths;
 
 });
 
@@ -287,15 +301,15 @@ ipcMain.handle('file:delete', async (event, { pathFile }) => {
 });
 
 
-ipcMain.handle('image:save-multiple', async (event, params) => {
+ipcMain.handle('media:save-multiple', async (event, params) => {
 
     const results = [];
-    const destPath = PATH_IMAGE + params.elementName + '/' + params.elementId;  
+    const destPath = PATH_MEDIA + params.elementName + '/' + params.elementId;  
 
   	fs.mkdirSync(destPath, { recursive: true });
 
-  	const imageDB = new ImageDB(db.db);
-    let sort = imageDB.getLastSort(params.elementName, params.elementId);
+  	const mediaDB = new MediaDB(db.db);
+    let sort = mediaDB.getLastSort(params.elementName, params.elementId);
 
     for (const sourcePath of params.pathsSorgente) {
 
@@ -308,8 +322,17 @@ ipcMain.handle('image:save-multiple', async (event, params) => {
 
           fs.copyFileSync(sourcePath, destPathFile);
 
-  	      const paramsDB = {elementName: params.elementName, elementId: params.elementId, filename: fileName, sort: sort};
-    	    imageDB.save(paramsDB);
+          const ext = path.extname(fileName).toLowerCase();
+          const type = ['.mp4', '.webm', '.mov'].includes(ext) ? 'video' : 'image';          
+
+  	      const paramsDB = {
+            elementName: params.elementName
+            , elementId: params.elementId
+            , filename: fileName
+            , type: type
+            , sort: sort
+          };
+    	    mediaDB.save(paramsDB);
 
         } catch (err) {
             console.error(`Errore caricamento file:`, err);
@@ -319,3 +342,5 @@ ipcMain.handle('image:save-multiple', async (event, params) => {
     return results;
 
 });
+
+

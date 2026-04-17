@@ -16,6 +16,7 @@ export const AppIcons = {
     Website: (props) => <Icon.Globe {...props} />,
     Email: (props) => <Icon.Envelope {...props} />,
     Map: (props) => <Icon.PinMap {...props} />,
+    Play: (props) => <Icon.PlayFill {...props} />,
 
     View: {
         Table: (props) => <Icon.ListColumns {...props} />,

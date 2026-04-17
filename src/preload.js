@@ -4,9 +4,9 @@ const api = {
 
     // File system
     getFilePath: (file) => webUtils.getPathForFile(file),
-    getPathImage: (fileName) => ipcRenderer.invoke('path:image', fileName),
-    uploadImages: (params) => ipcRenderer.invoke('image:upload-multiple', params),
-    saveImages: (params) => ipcRenderer.invoke('image:save-multiple', params),
+    getPathMedia: (fileName) => ipcRenderer.invoke('path:media', fileName),
+    uploadMedias: (params) => ipcRenderer.invoke('media:upload-multiple', params),
+    saveMedias: (params) => ipcRenderer.invoke('media:save-multiple', params),
     deleteFile: (params) => ipcRenderer.invoke('file:delete', params),
     deleteFolder: (params) => ipcRenderer.invoke('folder:delete', params),
     openFile: (fullPath) => ipcRenderer.invoke('file:open', fullPath),
@@ -19,13 +19,13 @@ const api = {
     getAllTrashes: (element) => ipcRenderer.invoke('trash:getAll', element),
     getAllTrashesCount: () => ipcRenderer.invoke('trash:getAllCounts'),
 
-    // Image
-    getImage: (id) => ipcRenderer.invoke('image:get', id),
-    getAllImages: (params) => ipcRenderer.invoke('image:getAll', params),
-    restoreImage: (id) => ipcRenderer.invoke('image:restore', id),
-    deleteImage: (params) => ipcRenderer.invoke('image:delete', params),
-    deleteAllImages: (params) => ipcRenderer.invoke('image:deleteAll', params),
-    updateImageOrder: (orderedIds) => ipcRenderer.invoke('image:update-orders', orderedIds),
+    // Media
+    getMedia: (id) => ipcRenderer.invoke('media:get', id),
+    getAllMedias: (params) => ipcRenderer.invoke('media:getAll', params),
+    restoreMedia: (id) => ipcRenderer.invoke('media:restore', id),
+    deleteMedia: (params) => ipcRenderer.invoke('media:delete', params),
+    deleteAllMedias: (params) => ipcRenderer.invoke('media:deleteAll', params),
+    updateMediaOrder: (orderedIds) => ipcRenderer.invoke('media:update-orders', orderedIds),
 
     // Annotation
     getAnnotation: (id) => ipcRenderer.invoke('annotation:get', id),
@@ -82,6 +82,7 @@ const api = {
     getAllContainersByElement: (params) => ipcRenderer.invoke('container:getAllByElement', params),
     saveContainer: (params) => ipcRenderer.invoke('container:save', params),
     deleteContainer: (id) => ipcRenderer.invoke('container:delete', id),
+
 
 
 }

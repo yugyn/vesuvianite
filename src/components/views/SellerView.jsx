@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import DetailsElement from '../elements/DetailsElement';
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
-import ImageList from '../lists/ImageList';
+import MediaList from '../lists/MediaList';
 import ShortDescriptionElement from '../elements/ShortDescriptionElement';
 import DescriptionElement from '../elements/DescriptionElement';
 import AnnotationsElement from '../elements/AnnotationsElement';
@@ -222,7 +222,7 @@ const SellerView = () => {
 
                         <hr/>
 
-                        <ImageList 
+                        <MediaList 
                             elementName='seller'
                             elementId={id}
                             small={true}

@@ -2,12 +2,12 @@ import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { AppIcons } from '../../utils/iconUtils';
 import PageHeader from '../elements/PageHeaderElement';
-import ImageElement from '../elements/ImageElement';
-import NoImageFallback from '../../images/1.jpg';
-import ImageGridElement from '../elements/ImageGridElement';
-import ImageViewerElement from '../elements/ImageViewerElement';
+import MediaElement from '../elements/MediaElement';
+import NoMediaFallback from '../../images/1.jpg';
+import MediaGridElement from '../elements/MediaGridElement';
+import MediaViewerElement from '../elements/MediaViewerElement';
 
-const ImageList = ({ elementName, elementId, small, deleted }) => {
+const MediaList = ({ elementName, elementId, small, deleted }) => {
 
     const { t } = useTranslation();
 
@@ -20,10 +20,10 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
 
     const handleUpload = async () => {
 
-        const paths = await window.electronAPI.uploadImages();
+        const paths = await window.electronAPI.uploadMedias();
         if (!paths || paths.length === 0) return;
 
-        const nuoviRecord = await window.electronAPI.saveImages({
+        const nuoviRecord = await window.electronAPI.saveMedias({
             elementName: elementName,
             elementId: elementId,
             pathsSorgente: paths
@@ -36,12 +36,18 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
 
     const handleDelete = async () => {
 
-        const confirm = window.confirm("Sei sicuro di voler eliminare questa immagine?");
+        let message = t('media.confirm.delete');
+        if(currentMedia.type === 'image') {
+            message = t('media.confirm.delete.image');
+        } else if(currentMedia.type === 'video') {
+            message = t('media.confirm.delete.video');
+        }
+        const confirm = window.confirm(message);
         if (!confirm) return;
 
-        const result = await window.electronAPI.deleteImage({id: currentImg.id});
+        const result = await window.electronAPI.deleteMedia({id: currentMedia.id});
         if(result.success) {
-            setElements(prev => prev.filter(item => item.id !== currentImg.id));
+            setElements(prev => prev.filter(item => item.id !== currentMedia.id));
         } else {
             alert("Errore durante l'eliminazione: " + result.error);
         }
@@ -65,11 +71,11 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
         const files = Array.from(e.dataTransfer.files);
         
         const validPaths = files
-            .filter(file => file.type.startsWith('image/'))
+            .filter(file => file.type.startsWith('image/') || file.type.startsWith('video/'))
             .map(file => window.electronAPI.getFilePath(file));
 
         if (validPaths.length > 0) {
-            const nuoviRecord = await window.electronAPI.saveImages({
+            const nuoviRecord = await window.electronAPI.saveMedias({
                 elementName: elementName,
                 elementId: elementId,
                 pathsSorgente: validPaths
@@ -83,11 +89,11 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
 
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
-    const currentImg = selectedIndex !== -1 ? elements[selectedIndex] : null;
+    const currentMedia = selectedIndex !== -1 ? elements[selectedIndex] : null;
 
     const closeViewer = () => {
         setSelectedIndex(-1);
-        currentImg = null;
+        currentMedia = null;
     };    
 
     async function loadAll() {
@@ -95,7 +101,7 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
         try {
 
             const params = {elementName: elementName, elementId: elementId }
-            const data = await window.electronAPI.getAllImages(params);
+            const data = await window.electronAPI.getAllMedias(params);
             if(data) {
                 setElements(data);
             } else {
@@ -129,7 +135,7 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
                 
                     <small>
                         <b>
-                        {`${t('image.list.title.short')} (${elements.length})`}
+                        {`${t('media.list.title.short')} (${elements.length})`}
                         </b>
                     </small>
 
@@ -138,7 +144,7 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
                             <button 
                                 className="btn btn-outline-primary btn-xs" 
                                 onClick={handleUpload}
-                                title={t('image.action.add')}
+                                title={t('media.action.add')}
                             >
                                 <AppIcons.Add />
                             </button>
@@ -150,13 +156,13 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
             ) : (
 
                 <PageHeader 
-                    title={`${t('image.list.title')} (${elements.length})`}
+                    title={`${t('media.list.title')} (${elements.length})`}
                     subTitle={true}
                 >
                     <button 
                         className="btn btn-outline-primary btn-sm mb-3" 
                         onClick={handleUpload}
-                        title={t('image.action.add')}
+                        title={t('media.action.add')}
                     >
                         <AppIcons.Add />
                     </button>
@@ -172,11 +178,11 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
                 style={{ transition: 'background 0.3s' }}
             >
 
-                <ImageGridElement 
-                    images={elements} 
+                <MediaGridElement 
+                    medias={elements} 
                     elementName={elementName} 
                     elementId={elementId} 
-                    onImageClick={(index) => {
+                    onMediaClick={(index) => {
                         if (!deleted) {
                             setSelectedIndex(index);
                         }
@@ -185,11 +191,11 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
                     deleted={deleted} 
                 />
 
-                {currentImg && (
-                    <ImageViewerElement 
+                {currentMedia && (
+                    <MediaViewerElement 
                         elementName={elementName} 
                         elementId={elementId} 
-                        currentImg={currentImg}
+                        currentMedia={currentMedia}
                         currentIndex={selectedIndex}
                         total={elements.length}
                         onClose={() => setSelectedIndex(-1)}
@@ -206,4 +212,4 @@ const ImageList = ({ elementName, elementId, small, deleted }) => {
 
 };
 
-export default ImageList;
+export default MediaList;

@@ -1,7 +1,7 @@
 
-class ImageDB {
+class MediaDB {
 
-    static TB_NAME = 'image';
+    static TB_NAME = 'media';
 
     constructor(db) {
         this.db = db
@@ -49,7 +49,7 @@ class ImageDB {
     save(params) {
 
         if(params.id && params.id !== '0') {
-            return this.update(params);
+//            return this.update(params);
         }
 
         return this.insert(params);
@@ -61,13 +61,14 @@ class ImageDB {
         try {
 
             const query = `
-                INSERT INTO ${this.constructor.TB_NAME}(element_name, element_id, filename, sort) 
-                VALUES(?, ?, ?, ?)
+                INSERT INTO ${this.constructor.TB_NAME}(element_name, element_id, filename, type, sort) 
+                VALUES(?, ?, ?, ?, ?)
             `;
             const values = Array();
             values.push(params.elementName);
             values.push(params.elementId);
             values.push(params.filename);
+            values.push(params.type);
             values.push(params.sort);
 
             const stmt = this.db.prepare(query);
@@ -75,39 +76,6 @@ class ImageDB {
             return {
                 success: true,
                 id: info.lastInsertRowid,
-            }
-
-        } catch(err) {
-            return {
-                error: err.message,
-            }
-        }
-
-    }
-
-    update(params) {
-
-        try {
-
-            const query = `
-                UPDATE ${this.constructor.TB_NAME}
-                set element_name = ?
-                , element_id = ?
-                , filename = ?
-                , date_update = CURRENT_TIMESTAMP
-                WHERE id = ?
-            `;
-            const values = Array();
-            values.push(params.elementName);
-            values.push(params.elementId);
-            values.push(params.filename);
-            values.push(params.id);
-
-            const stmt = this.db.prepare(query);
-            stmt.run(values);    
-            return {
-                success: true,
-                id: params.id,
             }
 
         } catch(err) {
@@ -284,4 +252,4 @@ class ImageDB {
 }
 
 
-export default ImageDB;
+export default MediaDB;

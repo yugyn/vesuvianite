@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { AppIcons } from '../../utils/iconUtils';
-import ImageElement from '../elements/ImageElement';
+import MediaElement from '../elements/MediaElement';
 
-const ImageViewerElement = ({ 
+const MediaViewerElement = ({ 
     elementName, 
     elementId, 
-    currentImg, 
+    currentMedia, 
     onClose, 
     onNext, 
     onPrev, 
@@ -14,6 +14,7 @@ const ImageViewerElement = ({
     total, 
     currentIndex    
 }) => {
+    
 
     const { t } = useTranslation();
 
@@ -41,19 +42,22 @@ const ImageViewerElement = ({
     };
 
     const openExternal = async () => {
-        const absolutePath = await window.electronAPI.getPathImage(`${elementName}/${elementId}/${currentImg.filename}`);
+        const absolutePath = await window.electronAPI.getPathMedia(`${elementName}/${elementId}/${currentMedia.filename}`);
         window.electronAPI.openFile(absolutePath);
     };    
 
     const handleDownload = async () => {
 
-        const absolutePath = await window.electronAPI.getPathImage(`${elementName}/${elementId}/${currentImg.filename}`);
+        const absolutePath = await window.electronAPI.getPathMedia(`${elementName}/${elementId}/${currentMedia.filename}`);
         const result = await window.electronAPI.downloadFile({
             sourcePath: absolutePath,
-            fileName: currentImg.filename
+            fileName: currentMedia.filename
         });
 
     };
+
+    const [currentTime, setCurrentTime] = useState(0);
+    const [videoDuration, setVideoDuration] = useState(0);
 
     useEffect( () => {
 
@@ -102,7 +106,7 @@ const ImageViewerElement = ({
 
                             <div className="d-flex align-items-center gap-2">
                                 <h5 className="modal-title">
-                                    {t('image.viewer.title')}
+                                    {t('media.viewer.title')}
                                 </h5>
                             </div>
 
@@ -111,7 +115,7 @@ const ImageViewerElement = ({
                                 <button 
                                     className="btn btn-outline-light btn-sm" 
                                     onClick={toggleFullscreen}
-                                    title={isFullscreen ? t('image.action.resizeScreen') : t('image.action.fullScreen')}
+                                    title={isFullscreen ? t('media.action.resizeScreen') : t('media.action.fullScreen')}
                                 >
                                     {isFullscreen ? (
                                         <AppIcons.Screen.Resize />
@@ -138,8 +142,15 @@ const ImageViewerElement = ({
                                 justifyContent: 'center',
                                 overflow: 'visible'
                             }}>
-                                <ImageElement 
-                                    filePath={`${elementName}/${elementId}/${currentImg.filename}`} 
+
+                                <MediaElement 
+                                    elementName={elementName}
+                                    elementId={elementId}
+                                    item={currentMedia} 
+                                    onProgressUpdate={(data) => {
+                                        setCurrentTime(data.currentTime);
+                                        setVideoDuration(data.duration);
+                                    }}
                                     style={{ 
                                         maxWidth: '100%',
                                         maxHeight: '100%',
@@ -151,19 +162,19 @@ const ImageViewerElement = ({
                                     className="img-zoomable"
                                     onDoubleClick={openExternal}
                                 />
+
                             </div>
                         </div>
                         <div 
                             className="modal-footer border-0 bg-dark text-white d-flex justify-content-between align-items-center py-3 px-4"
                             style={{backgroundColor: '#000'}}
                         >
-
                             <div style={{ flex: 1 }} className="d-flex justify-content-start">
 
                                 <button 
                                     className="btn btn-outline-danger btn-sm d-flex align-items-center gap-2" 
                                     onClick={onDelete}
-                                    title={t('image.action.delete')}
+                                    title={t('media.action.delete')}
                                 >
                                     <AppIcons.Delete />
                                 </button>
@@ -171,7 +182,7 @@ const ImageViewerElement = ({
                                 <button 
                                     className="btn btn-outline-light btn-sm ms-5" 
                                     onClick={openExternal}
-                                    title={t('image.action.openExternal')}
+                                    title={t('media.action.openExternal')}
                                 >
                                     <AppIcons.Open.External />
                                 </button>
@@ -179,21 +190,52 @@ const ImageViewerElement = ({
                                 <button 
                                     className="btn btn-outline-light btn-sm ms-1" 
                                     onClick={handleDownload}
-                                    title={t('image.action.download')}
+                                    title={t('media.action.download')}
                                 >
                                     <AppIcons.Download />
                                 </button>                                        
 
                             </div>
 
+                            {currentMedia.type === 'video' && (
+
+                                <div style={{ flex: 1 }} className="d-flex align-items-center justify-content-center">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <span style={{ fontSize: '0.7rem', minWidth: '35px', color: '#fff' }}>
+                                            {formatTime(currentTime)}
+                                        </span>
+
+                                        <input 
+                                            type="range"
+                                            className="form-range"
+                                            // Usiamo value per renderlo controllato dallo stato
+                                            value={currentTime}
+                                            min="0"
+                                            max={videoDuration || 0}
+                                            step="0.1"
+                                            // Impediamo l'interazione dell'utente
+                                            readOnly 
+                                            style={{ pointerEvents: 'none', cursor: 'default' }} 
+                                        />
+
+                                        <span style={{ fontSize: '0.7rem', minWidth: '35px', color: '#fff' }}>
+                                            {formatTime(videoDuration)}
+                                        </span>
+
+                                    </div>
+                                </div>
+                            )}
+
+
                             <div style={{ flex: 2 }} className="d-flex align-items-center justify-content-center">
+                                
                                 <div className="d-flex align-items-center gap-3 px-3 py-2 bg-white bg-opacity-10 rounded-pill">
 
                                     <button 
                                         className="btn btn-outline-light btn-sm" 
                                         onClick={handleZoomOut}
                                         disabled={zoomLevel <= MIN_ZOOM}
-                                        title={t('image.zoom.out')}
+                                        title={t('media.zoom.out')}
                                     >
                                         <AppIcons.Zoom.Out />
                                     </button>
@@ -213,14 +255,14 @@ const ImageViewerElement = ({
                                         className="btn btn-outline-light btn-sm" 
                                         onClick={handleZoomIn}
                                         disabled={zoomLevel >= MAX_ZOOM}
-                                        title={t('image.zoom.in')}
+                                        title={t('media.zoom.in')}
                                     >
                                         <AppIcons.Zoom.In/>
                                     </button>
                                     <button 
                                         className="btn btn-outline-light btn-sm" 
                                         onClick={resetZoom}
-                                        title={t('image.zoom.reset')}
+                                        title={t('media.zoom.reset')}
                                     >
                                         <AppIcons.Zoom.Reset/>
                                     </button>
@@ -242,14 +284,14 @@ const ImageViewerElement = ({
                                     <button 
                                         className="btn btn-outline-light btn-sm px-3" 
                                         onClick={onPrev}
-                                        title={t('image.action.prev')}
+                                        title={t('media.action.prev')}
                                     >
                                         <AppIcons.Prev />
                                     </button>
                                     <button 
                                         className="btn btn-outline-light btn-sm px-3" 
                                         onClick={onNext}
-                                        title={t('image.action.next')}
+                                        title={t('media.action.next')}
                                     >
                                         <AppIcons.Next />
                                     </button>
@@ -271,4 +313,11 @@ const ImageViewerElement = ({
 };
 
 
-export default ImageViewerElement;
+const formatTime = (time) => {
+    if (isNaN(time)) return "0:00";
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+};
+
+export default MediaViewerElement;

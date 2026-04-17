@@ -1,3 +1,4 @@
+import ContainerDB from "./ContainerDB";
 
 class SellerDB {
 
@@ -181,6 +182,11 @@ class SellerDB {
                     const query = `DELETE FROM ${this.constructor.TB_NAME} WHERE id = ?`;
                     const stmt = this.db.prepare(query);
                     stmt.run(id);
+
+                    const queryContainer = `UPDATE ${ContainerDB.TB_NAME} set seller_id = null WHERE seller_id = ?`;
+                    const stmtContainer = this.db.prepare(queryContainer);
+                    stmt.run(id);
+
                     return {
                         success: true,
                         physical: true

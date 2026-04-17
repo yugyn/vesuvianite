@@ -6,7 +6,7 @@ import CrystalSystemDB from "./CrystalSystemDB";
 import MineralDB from "./MineralDB";
 import ContainerDB from "./ContainerDB";
 import SellerDB from "./SellerDB";
-import ImageDB from "./ImageDB";
+import MediaDB from "./MediaDB";
 import AnnotationDB from "./AnnotationDB";
 
 export default function ipcHandlers(db) {
@@ -28,26 +28,26 @@ export default function ipcHandlers(db) {
 
 
 
-    // Image
-    const imageDB = new ImageDB(db.db);
+    // Media
+    const mediaDB = new MediaDB(db.db);
 
-    ipcMain.handle('image:get', (_, id) => {
-        return imageDB.get(id);
+    ipcMain.handle('media:get', (_, id) => {
+        return mediaDB.get(id);
     });
-    ipcMain.handle('image:getAll', (_, params) => {
-        return imageDB.getAll(params);
+    ipcMain.handle('media:getAll', (_, params) => {
+        return mediaDB.getAll(params);
     });
-    ipcMain.handle('image:delete', (_, params) => {
-        return imageDB.delete(params);
+    ipcMain.handle('media:delete', (_, params) => {
+        return mediaDB.delete(params);
     });
-    ipcMain.handle('image:deleteAll', (_, params) => {
-        return imageDB.deleteAll(params);
+    ipcMain.handle('media:deleteAll', (_, params) => {
+        return mediaDB.deleteAll(params);
     });
-    ipcMain.handle('image:restore', (_, id) => {
-        return imageDB.restore(id);
+    ipcMain.handle('media:restore', (_, id) => {
+        return mediaDB.restore(id);
     });
-    ipcMain.handle('image:update-orders', (_, orderedIds) => {
-        return imageDB.updateOrders(orderedIds);
+    ipcMain.handle('media:update-orders', (_, orderedIds) => {
+        return mediaDB.updateOrders(orderedIds);
     });
 
 

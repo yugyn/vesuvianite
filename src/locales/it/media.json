@@ -1,0 +1,24 @@
+{
+
+  "media.label": "Media",
+  "media.list.title": "Galleria",
+  "media.list.title.short": "Media",
+  "media.viewer.title": "Visualizzatore",
+  "media.action.add": "Aggiungi media",
+  "media.action.save": "Salva media",
+  "media.action.edit": "Modifica media",
+  "media.action.delete": "Elimina media",
+  "media.action.prev": "Media precedente",
+  "media.action.next": "Media successiva",
+  "media.action.fullScreen": "A tutto schermo",
+  "media.action.resizeScreen": "Esci da tutto schermo",
+  "media.action.openExternal": "Apri media con l'app di sistema",
+  "media.action.download": "Scarica media",
+  "media.zoom.in": "Zoom avanti",
+  "media.zoom.out": "Zoom indietro",
+  "media.zoom.reset": "Zoom 100%",
+  "media.confirm.delete": "Sei sicuro di voler eliminare questo media?",
+  "media.confirm.delete.image": "Sei sicuro di voler eliminare questa immagine?",
+  "media.confirm.delete.video": "Sei sicuro di voler eliminare questo video?"
+
+}

@@ -1,11 +1,11 @@
-import ImageDB from "./ImageDB";
+import MediaDB from "./MediaDB";
 import SellerDB from "./SellerDB";
 
 class TrashDB {
 
     constructor(db) {
         this.db = db
-        this.imageDB = new ImageDB(this.db);
+        this.mediaDB = new MediaDB(this.db);
         this.sellerDB = new SellerDB(this.db);
     }
 
@@ -13,7 +13,7 @@ class TrashDB {
 
         switch(element) {
             case 'image':
-                return this.imageDB.getAllDeleted();
+                return this.mediaDB.getAllDeleted();
             case 'seller':
                 return this.sellerDB.getAllDeleted();
         }
@@ -36,7 +36,7 @@ class TrashDB {
         });
 
         // Image
-        count = this.imageDB.getAllDeletedCount();
+        count = this.mediaDB.getAllDeletedCount();
         elements.push({
             element: 'image'
             , count: count

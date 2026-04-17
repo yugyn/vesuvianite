@@ -3,7 +3,7 @@ import { initReactI18next } from 'react-i18next';
 
 import globalIT from './locales/it/global.json'; 
 import annotationIT from './locales/it/annotation.json'; 
-import imageIT from './locales/it/image.json'; 
+import mediaIT from './locales/it/media.json'; 
 import sellerIT from './locales/it/seller.json'; 
 import containerIT from './locales/it/container.json'; 
 import mineralIT from './locales/it/mineral.json'; 
@@ -18,7 +18,7 @@ i18n
         translation: {
         ...globalIT,
         ...annotationIT,
-        ...imageIT,
+        ...mediaIT,
         ...sellerIT,
         ...containerIT,
         ...mineralIT,
